@@ -21,27 +21,36 @@ function BinaryRelation(baseSet, pairSet){
 
     // baseSet must be an instance of Set, otherwise there is a problem
     if (! baseSet instanceof Set) {
-	throw "illegal argument: BinaryRelation constructor takes a Set";
+	throw "illegal argument: BinaryRelation constructor takes two Set arguments";
     }
 
-    this.baseSet = baseSet;
-    this.pairSet = new Set([]);
+    if (! pairSet instanceof Set) {
+	throw "illegal argument: BinaryRelation constructor takes two Set Arguments";
+    }
+
+    this.baseSet = baseSet.clone();
+    this.pairSet = pairSet.clone();
+
+    var cartesianProduct =  this.pairSet.cartesianProduct(this.pairSet);
+
+    if (! this.pairSet.isSubsetEqOf(cartesianProduct)) {
+        throw "Illegal Argument: pairSet must be subset of baseSet cross baseSet";
+    }
+
+    this.isLegalPair = function(pair) {
+	return ( pair instanceof Tuple &&
+		 pair.size() == 2 &&
+		 this.baseSet.contains(pair.elementAt(0)) &&
+		 this.baseSet.contains(pair.elementAt(1)));
+    }
+ 
 
     this.addElement = function(pair){
-	if (! pair instanceof Tuple || pair.size() != 2) {
-	    throw "illegal argument: BinaryRelation.addElement only takes pairs (tuples of size 2)";
+	if (! this.isLegalPair(pair)) {
+	    throw "illegal argument in BinaryRelation.addElement()";
 	}
-	
-	
-	/** Check that both members of pair are contained in the base set */
-	
-        if( (!this.baseSet.contains(pair.elementAt[0])) ||
-	    (!this.baseSet.contains(pair.elementAt[1]))  ) {
-	    throw "Illegal Argument: elements of pair to add must be elements of baseSet";
-	}
-	    
+		    
 	this.pairSet.addElement(pair);
-
     };
 
     this.clone = function(){
