@@ -1,0 +1,78 @@
+/* Paste this above grammar in peg.js online parser generator
+   (http://pegjs.majda.cz/online) so that it will be able to construct the Set
+   and Tuple objects as it parses */
+
+{
+  /* Initializer */
+function isEquivalentTo(x,y) {
+    if(x==null || y==null){
+        return false;
+    } else if (typeof(x) != typeof(y))
+        return false;
+    switch (typeof(x)) {
+        case "string":
+        case "number":
+        case "boolean":
+            return x==y;
+        case "object":
+            if (x instanceof Set && y instanceof Set)  {
+                return x.isSameSetAs(y);
+            } else if (x instanceof Tuple && y instanceof Tuple){
+                return x.isSameTupleAs(y);
+            } else{
+                return false;
+            }
+        default:
+            throw "Unknown type in isEquivalentTo";
+    }
+};
+
+function Set(array, throwDupError) {
+    //Initialize temp to the passed array or a random array
+    var temp = array || randArrayOfElements();
+    //The 'elements' member of a Set object is the array that holds the
+    //members of the set. It will not have duplicate elements.
+    this.elements = [];
+    //This is a member function of the Set class
+    this.size = function(){
+        return this.elements.length;
+    };
+
+    this.indexOfElement = function(element){
+        for (var i=0; i<this.size(); i++) {
+            if (isEquivalentTo(element,this.elements[i])){
+                return i;
+            }
+        }
+        return -1;
+    };
+
+    this.contains = function(element) {
+        return this.indexOfElement(element)!=-1;
+    };
+
+    this.addElement = function(element){
+        if(element!=null){
+            if(!this.contains(element)){
+                this.elements.push(element);
+            }
+        }
+    };
+
+    for( var i = 0; i<temp.length; i++){
+        this.addElement(temp[i]);
+    }
+
+    if(throwDupError && this.elements.length < array.length) {
+        //This throws an error if the parser was trying to create a Set object
+        //but it had duplicate elements, since that is technically not a valid
+        //set. If we decide not to throw an error for this, it's a simple fix.
+        throw "You entered in a multi-set, not a set"
+    }
+
+};
+
+function Tuple(array){
+    this.elements = array || randArrayOfElements();
+};
+}
