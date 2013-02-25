@@ -80,18 +80,21 @@ function randFromArray(arr, count) {
 //Creates a random array with size between minElems and maxElems (inclusive)
 //Elements are selected from sourceSet if passed, or a default set.
 function randArrayOfElements(maxElems,minElems,sourceSet) {
+    var source = sourceSet || [
+        ["t","u","v","w","x","y","z"],
+        ["a","b","c","d","e","f"],
+        [1,2,3,4,5,6,7]][_.random(2)];
     minElems = minElems || 1;
     maxElems = maxElems || _.random(minElems,5);
+    if(maxElem>len(source)){
+        maxElem=len(source);
+    }
     if(minElems>maxElems){
         minElems = maxElems;
     }
     //Set the source array from which elements will be selected.
     //If the sourceSet parameter is passed, that will be used; otherwise, it
     //will use one of the default arrays.
-    var source = sourceSet || [
-        ["t","u","v","w","x","y","z"],
-        ["a","b","c","d","e","f"],
-        [1,2,3,4,5,6,7]][_.random(2)];
     return randFromArray(source,_.random(minElems,maxElems));
 };
 
@@ -103,14 +106,13 @@ function Set(array, throwDupError, name) {
     this.elements = [];
 
     //This is a member function of the Set class
-    this.size = function() {
+    this.cardinality = function() {
         return this.elements.length;
     };
 
-    this.cardinality = this.size;
 
     this.indexOfElement = function(element) {
-        for (var i=0; i<this.size(); i++) {
+        for (var i=0; i<this.cardinality(); i++) {
             if (isEquivalentTo(element,this.elements[i])){
                 return i;
             }
@@ -118,16 +120,13 @@ function Set(array, throwDupError, name) {
         return -1;
     };
 
-    this.contains = function(element) {
+    this.hasElement = function(element) {
         return this.indexOfElement(element)!=-1;
     };
 
-    this.hasElement = this.contains;
-    this.containsElement = this.contains;
-
     this.addElement = function(element) {
         if(element!=null){
-            if(!this.contains(element)){
+            if(!this.hasElement(element)){
                 this.elements.push(element);
             }
         }
@@ -137,7 +136,7 @@ function Set(array, throwDupError, name) {
         this.addElement(temp[i]);
     }
 
-    if(throwDupError && this.elements.length < array.length) {
+    if(throwDupError && this.elements.length < temp.length) {
         //This throws an error if the parser was trying to create a Set object
         //but it had duplicate elements, since that is technically not a valid
         //set. If we decide not to throw an error for this, it's a simple fix.
@@ -154,10 +153,24 @@ function Set(array, throwDupError, name) {
         _.each(this.elements, function(element, i) { str += "\n" + (new Node(30,20+60*(i+1), element.toString())).toSvg(); });
         return str;
     }
-
+    
+    // Performs a deep clone. Thus, it recursively searches for Tuples or Sets and calls clone on them.
     this.clone = function() {
-        return new Set(this.elements);
+        var dupe = [];
+        for(var i = 0; i < this.cardinality();i++){
+            if(typeof(this.elements[i]) == "object"){
+                if(this.elements[i] instanceof Set || this.elements[i] instanceof Tuple){
+                    dupe.push(this.elements[i].clone());
+                } else{
+                    throw "Found non Set or Tuple object in Set while cloning";
+                }
+            } else{
+                dupe.push(this.elements[i]);
+            }
+        }
+        return new Set(dupe);
     };
+
     this.shuffle = function() {
         this.elements.sort(function() { return 0.5 - Math.random();});
     };
@@ -169,7 +182,7 @@ function Set(array, throwDupError, name) {
     //Concatenate all the elements together into a string representing the set
     this.format = function() {
         var output = "{";
-        for(var i = 0; i < this.size(); i++){
+        for(var i = 0; i < this.cardinality(); i++){
             if(typeof(this.elements[i]) == "object"){
                 if(this.elements[i] instanceof Set || this.elements[i] instanceof Tuple) {
                     output+=this.elements[i].format();
@@ -193,8 +206,8 @@ function Set(array, throwDupError, name) {
     //A.cartesianProduct(B) = A x B
     this.cartesianProduct = function(otherSet) {
         var answer = [];
-        for (var i=0; i<this.size(); i++) {
-            for (var j=0; j<otherSet.size(); j++) {
+        for (var i=0; i<this.cardinality(); i++) {
+            for (var j=0; j<otherSet.cardinality(); j++) {
                 var tuple = new Tuple([this.elements[i],otherSet.elements[j]]);
                 answer.push(tuple);
             }
@@ -203,56 +216,35 @@ function Set(array, throwDupError, name) {
     };
 
     //Returns true if otherSet is a subset or equal to this set.
-    this.containsSet = function(otherSet) {
+    this.hasSubset = function(otherSet) {
         if(!(otherSet instanceof Set)){
             return false;
         }
 
         for (var i=0; i<otherSet.elements.length; i++) {
-            if (!this.contains(otherSet.elements[i]) ){
+            if (!this.hasElement(otherSet.elements[i]) ){
                 return false;
             }
         }
         return true;
     };
 
-    this.hasSubset = this.containsSet;
-
-    this.isSubsetOf = function(otherSet) {
-        if(!(otherSet instanceof Set)){
-            return false;
-        }
-        return otherSet.hasSubset(this);
-    }
 
     //Returns true if this set contains the subset otherset.
     //Equivalent to otherset \subset this in laTeX
-    this.containsProperSubset = function(otherSet) {
-        return this.containsSet(otherSet) && !otherSet.containsSet(this);
+    this.hasProperSubset = function(otherSet) {
+        return this.hasSubset(otherSet) && !otherSet.hasSubset(this);
     };
-
-
-    this.hasProperSubset = this.containsProperSubset;
-
-    this.isProperSubsetOf = function(otherSet) {
-        if(!(otherSet instanceof Set)){
-            return false;
-        }
-        return otherSet.hasProperSubset(this);
-    }
 
     this.isSameSetAs = function(otherSet) {
-        return this.containsSet(otherSet) && otherSet.containsSet(this);
+        return this.hasSubset(otherSet) && otherSet.hasSubset(this);
     };
 
-    this.equals = this.isSameSetAs;
-
     this.removeElementAtIndex = function(index) {
-        if(index>=0 && index < this.size()){
-            this.elements.splice(index,1);
-            return true;
+        if(index>=0 && index < this.cardinality()){
+            return this.elements.splice(index,1);
         }
-        return false;
+        throw "Index out of bounds";
     };
 
     this.removeElement = function(element) {
@@ -260,7 +252,7 @@ function Set(array, throwDupError, name) {
     };
 
     this.getRandomSubset = function(maxSize) {
-        maxSize = maxSize || _.random(0,this.size()-1);
+        maxSize = maxSize || _.random(0,this.cardinality()-1);
         return new Set(randFromArray(this.elements,maxSize));
     };
 
@@ -269,7 +261,7 @@ function Set(array, throwDupError, name) {
 function Tuple(array) {
     this.elements = array || randArrayOfElements();
 
-    this.size = function(){
+    this.cardinality = function(){
         return this.elements.length;
     };
 
@@ -278,7 +270,7 @@ function Tuple(array) {
     }
 
     this.indexOfElement = function(element) {
-        for (var i=0; i<this.size(); i++) {
+        for (var i=0; i<this.cardinality(); i++) {
             if (isEquivalentTo(element,array[i])){
                 return i;
             }
@@ -286,12 +278,9 @@ function Tuple(array) {
         return -1;
     };
 
-    this.contains = function(element) {
+    this.hasElement = function(element) {
         return this.indexOfElement(element)!=-1;
     };
-
-    this.hasElement = this.contains;
-    this.containsElement = this.contains;
 
     this.addElement = function(element) {
         if(element!=null){
@@ -303,9 +292,26 @@ function Tuple(array) {
         return this.format().replace("{","\\{").replace("}","\\}");
     };
 
+    // Performs a deep clone. Thus, it recursively searches for Tuples or Sets and calls clone on them.
+    this.clone = function() {
+        var dupe = [];
+        for(var i = 0; i < this.cardinality();i++){
+            if(typeof(this.elements[i]) == "object"){
+                if(this.elements[i] instanceof Set || this.elements[i] instanceof Tuple){
+                    dupe.push(this.elements[i].clone());
+                } else{
+                    throw "Found non Set or Tuple object in Set while cloning";
+                }
+            } else{
+                dupe.push(this.elements[i]);
+            }
+        }
+        return new Tuple(dupe);
+    };
+
     this.format =function() {
         var output = "(";
-        for(var i = 0; i < this.size(); i++){
+        for(var i = 0; i < this.cardinality(); i++){
             if(typeof(this.elements[i]) == "object"){
                 if(this.elements[i] instanceof Set || this.elements[i] instanceof Tuple) {
                     output+=this.elements[i].format();
@@ -325,13 +331,13 @@ function Tuple(array) {
     };
     this.toString = this.laTeXformat;
 
-    //They are only the same tuple if they are both Tuples, the otherTuple has the same size, 
+    //They are only the same tuple if they are both Tuples, the otherTuple has the same cardinality, 
     //and each tuple contains the same elements in the same order
     this.isSameTupleAs = function(otherTuple) {
-        if(!(otherTuple instanceof Tuple) || this.size()!=otherTuple.size()){
+        if(!(otherTuple instanceof Tuple) || this.cardinality()!=otherTuple.cardinality()){
             return false;
         }
-        for(var i = 0; i<this.size();i++){
+        for(var i = 0; i<this.cardinality();i++){
             if(!isEquivalentTo(this.elements[i],otherTuple.elements[i])){
                 return false;
             }
@@ -339,10 +345,8 @@ function Tuple(array) {
         return true;
     };
 
-    this.equals = this.isSameTupleAs;
-
     this.removeElementAtIndex = function(index) {
-        if(index>=0 && index < this.size()){
+        if(index>=0 && index < this.cardinality()){
             this.elements.splice(index,1);
             return true;
         }

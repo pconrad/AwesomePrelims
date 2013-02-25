@@ -630,11 +630,10 @@ parser = (function(){
 })();
 
 
-test( "sets", 50, function() {
+test( "sets", 51, function() {
 
 	equal( (new Set(["x","y","z"])).laTeXformat(), "\\{x,y,z\\}",
 		'Set(["x","y","z"]).laTeXformatAsSet()' );
-
 
 	equal( (new Set(["x","y"])).isSameSetAs(new Set(["y","x"])), true,
 		'Set(["x","y"]).isSameSetAs(["y","x"])' );
@@ -654,23 +653,26 @@ test( "sets", 50, function() {
 	equal( (new Tuple(["x","y"])).isSameTupleAs(new Tuple(["y","x"])), false,
 		'Tuple(["x","y"]).isSameTupleAs(Tuple(["y","x"])' );
 
-	equal( (new Set(["x","y"])).isSubsetOf(new Set(["y"])), false,
-		'Set(["x","y"]).isSubsetEq(Set(["y"]))' );
+	equal( (new Set(["y"])).hasSubset(new Set(["x","y"])), false,
+		'Set(["y"]).hasSubset(Set(["x","y"]))' );
 
-	equal( (new Set(["x"])).isSubsetOf(new Set(["x","y"])), true,
-		'Set(["x"]).isSubsetOf(Set(["x","y"]))' );
+	equal( (new Set(["x","y"])).hasSubset(new Set(["x"])), true,
+		'Set(["x","y"]).hasSubsetOf(Set(["x"]))' );
 
-	equal( (new Set([])).isSubsetOf(new Set(["x","y"])), true,
-		'Set([]).isSubsetOf(Set(["x","y"]))' );
+	equal( (new Set(["x","y"])).hasSubset(new Set([])), true,
+		'Set(["x","y"]).hassSubsetOf(Set([]))' );
 
-	equal( (new Set(["x"])).isSubsetOf(new Set([])), false,
-		'Set(["x"]).isSubsetOf(Set([]))' );
+	equal( (new Set([])).hasSubset(new Set(["x"])), false,
+		'Set([]).hasSubsetOf(Set(["x"]))' );
 
-	equal( (new Set(["x"])).isProperSubsetOf(new Set(["x"])), false,
-		'Set(["x"]).isProperSubsetOf(Set(["x"]))' );
+	equal( (new Set(["x"])).hasSubset(new Set(["x"])), true,
+		'Set(["x"]).hasSubset(Set(["x"]))' );
+	
+    equal( (new Set(["x"])).hasProperSubset(new Set(["x"])), false,
+		'Set(["x"]).hasProperSubset(Set(["x"]))' );
 
-	equal( (new Set(["x"])).isProperSubsetOf(new Set(["x","y"])), true,
-		'Set(["x"]).isProperSubsetOf(Set(["x","y"]))' );
+	equal( (new Set(["x","y"])).hasProperSubset(new Set(["x"])), true,
+		'Set(["x","y"]).hasProperSubset(Set(["x"]))' );
 
 	equal( (new Set(["y"])).hasElement("y"), true,
 		'Set(["y"].hasElement("y")' );
