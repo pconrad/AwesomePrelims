@@ -347,7 +347,7 @@ function Tuple(array) {
     //They are only the same tuple if they are both Tuples, the otherTuple has the same cardinality, 
     //and each tuple contains the same elements in the same order
     this.isSameTupleAs = function(otherTuple) {
-        if(!(otherTuple instanceof Tuple) || this.cardinality()!=otherTuple.cardinality()){
+        if((typeof(otherTuple) != "object") || !(otherTuple instanceof Tuple) || this.cardinality()!=otherTuple.cardinality()){
             return false;
         }
         for(var i = 0; i<this.cardinality();i++){
@@ -375,7 +375,6 @@ function Tuple(array) {
 };
 
 function BinaryRelation(baseSet, pairSet, baseSetLabel){
-
     // baseSet must be an instance of Set, otherwise there is a problem
     if (typeof(baseSet) != "object" || ! baseSet instanceof Set) {
         throw "illegal argument: BinaryRelation constructor takes two Set arguments";
@@ -459,9 +458,9 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel){
         return true;
     };
 
-    this.toString = function(){
+    this.toString = function(ignoreLabel){
         var comp = this.cartesianProduct.relativeComplement(this.pairSet);
-        if(!baseSetLabel ||
+        if(!baseSetLabel || ignoreLabel ||
             this.pairSet.cardinality() <= comp.cardinality()){
             return this.pairSet.toString();
         } else{
@@ -469,6 +468,86 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel){
         }
     };
 
+    this.addReflextiveClosure = function(){
+        for( var i = 0; i<this.baseSet.cardinality(); i++){
+            var elem = this.baseSet.elementAt(i);
+            this.addElement(new Tuple([elem,elem]));
+        }
+    };
 
+    this.addSymmetricClosure = function(){
+        for( var i = 0; i<this.pairSet.cardinality(); i++){
+            var elem = this.pairSet.elementAt(i);
+            this.addElement(new Tuple([elem.elementAt(1),elem.elementAt(0)]));
+        }
+    };
 
+    this.addTransitiveClosure = function(){
+        while(!this.isTransitive()){
+            // Start two loops through the list and set locals for ease...
+            for( var i = 0; i<this.pairSet.cardinality();i++){
+                var elem1 = this.pairSet.elementAt(i);
+                for( var o = 0; o < this.pairSet.cardinality(); o++){
+                    var elem2 = this.pairSet.elementAt(o);
+                    // If the second starts from the end of the first pair, 
+                    if( isEquivalentTo(elem1.elementAt(1),elem2.elementAt(0) )){
+                        //Check to make sure that the pairset contains the transitive pair
+                        this.addElement(new Tuple([elem1.elementAt(0),elem2.elementAt(1)]));
+                    }
+                }
+            }
+        }
+    };
+    this.isSameTupleAs = function(otherTuple) {
+        if(!(otherTuple instanceof Tuple) || this.cardinality()!=otherTuple.cardinality()){
+            return false;
+        }
+        for(var i = 0; i<this.cardinality();i++){
+            if(!isEquivalentTo(this.elements[i],otherTuple.elements[i])){
+                return false;
+            }
+        }
+        return true;
+    };
+
+    this.isSameRelationAs = function(otherRelation){
+        if((typeof(otherRelation)!="object") || !(otherTuple instanceof BinaryRelation)){
+            return false;
+        }
+        return this.baseSet.isSameSetAs(otherRelation.baseSet) && this.pairSet.isSameSetAs(otherRelation.pairSet);
+    };
+
+    this.getCorrectDescription = function(){
+
+    }
 };
+
+//Makes a binary relation from the sourceSet, optionally with a properties Bitmask
+//For the bitmask, add the following values together for the corresponding requirements
+//Reflexive: 1
+//Symmetric: 2
+//Transitive: 4
+//Not-Reflexive: 8
+//Not-Symmetric: 16
+//Not-Transitive: 32
+//Note that 1 & 8, 2 & 16, and 4 & 32 are not allowed together, as they are exclusive.
+function makeRandomRelation(sourceSet, sourceLabel, mask){
+    var result = null;
+    var cartesianProduct = sourceSet.cartesianProduct(sourceSet);
+    if( (mask & 9) == 9 ||
+        (mask & 18) == 18 ||
+        (mask & 36) == 36){
+        throw "Invalid mask combination!";
+    }
+    while(!result || 
+        ((mask & 1) && !(result.isReflexive())) ||
+        ((mask & 2) && !(result.isSymmetric())) ||
+        ((mask & 4) && !(result.isTransitive()))||
+        ((mask & 8) && (result.isReflexive()))  ||
+        ((mask & 16) && (result.isSymmetric())) ||
+        ((mask & 32) && (result.isTransitive()))
+        ){
+        result = new BinaryRelation(sourceSet,cartesianProduct.getRandomSubset(),sourceLabel);
+    }
+    return result;
+}
