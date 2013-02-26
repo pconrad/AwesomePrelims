@@ -1,0 +1,30 @@
+package edu.ucsb.cs56.pconrad.javamoodlexml.model;
+
+public class BipartiteGraphEdge {
+
+    private int from;
+    private int to;
+    private int numLeft;
+    private int numRight;
+
+    BipartiteGraphEdge(int from, int to, int numLeft, int numRight) {
+	this.from = from; this.to = to;
+	this.numLeft = numLeft; this.numRight = numRight;
+    }
+
+    public String toString {
+
+
+
+	    int xFrom = width/4;
+	    int yFrom = (e.from + 1) * ySep;
+	    int xTo = ((width * 3) / 4); // leave room for the arrow (10 pts)
+	    int yTo = (e.to + 1) * ySep;
+	    result += "<path marker-end='url(#triangle)' stroke-width='1' fill='none' stroke='black' " +
+		"d='M " + xFrom + " " + yFrom + " L " + xTo + " " + yTo + "' /> ";
+
+
+    }
+
+
+}
