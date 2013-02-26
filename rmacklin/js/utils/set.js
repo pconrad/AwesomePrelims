@@ -11,7 +11,7 @@
 
 function Node(centerX, centerY, label, radius, borderColor, fillColor, borderWidth, labelColor) {
     var DEFAULT_LABEL = "", DEFAULT_RADIUS = 20, DEFAULT_BORDER_COLOR = "black", 
-    DEFAULT_FILL_COLOR = "white", DEFAULT_BORDER_WIDTH = 2;
+        DEFAULT_FILL_COLOR = "white", DEFAULT_BORDER_WIDTH = 2;
 
     this.centerX = centerX;
     this.centerY = centerY;
@@ -35,10 +35,6 @@ function Node(centerX, centerY, label, radius, borderColor, fillColor, borderWid
         return str;
     }
 }
-
-
-
-
 
 function isEquivalentTo(x,y) {
     if(x==null || y==null){
@@ -72,8 +68,8 @@ function randFromArray(arr, count) {
         return arr[_.rand(arr.length)];
     } else{
         return _.map(arr.slice(0,count),function(){
-            return arr.splice(_.random(0,arr.length-1),1)[0];
-        });
+                return arr.splice(_.random(0,arr.length-1),1)[0];
+                });
     }
 };
 
@@ -86,12 +82,9 @@ function randArrayOfElements(maxElems,minElems,sourceSet) {
         [1,2,3,4,5,6,7]][_.random(2)];
     minElems = minElems || 1;
     maxElems = maxElems || _.random(minElems,5);
-    if(maxElem>len(source)){
-        maxElem=len(source);
-    }
-    if(minElems>maxElems){
-        minElems = maxElems;
-    }
+    maxElems = Math.min(source.length,maxElems);
+    minElems = Math.min(maxElems,minElems);
+
     //Set the source array from which elements will be selected.
     //If the sourceSet parameter is passed, that will be used; otherwise, it
     //will use one of the default arrays.
@@ -110,6 +103,9 @@ function Set(array, throwDupError, name) {
         return this.elements.length;
     };
 
+    this.elementAt = function(index) {
+        return this.elements[index];
+    };
 
     this.indexOfElement = function(element) {
         for (var i=0; i<this.cardinality(); i++) {
@@ -149,11 +145,11 @@ function Set(array, throwDupError, name) {
     //TODO: Make this scalable again
     this.toSvg = function() {
         str = "<rect x='3' y='10' width='55' height='" + (this.elements.length*60+20*2) + "' fill='white' stroke-width='2' stroke='black' />"
-        str += "\n<text x='24' y='25' fill='black'>" + this.name + "</text>"
-        _.each(this.elements, function(element, i) { str += "\n" + (new Node(30,20+60*(i+1), element.toString())).toSvg(); });
+            str += "\n<text x='24' y='25' fill='black'>" + this.name + "</text>"
+            _.each(this.elements, function(element, i) { str += "\n" + (new Node(30,20+60*(i+1), element.toString())).toSvg(); });
         return str;
     }
-    
+
     // Performs a deep clone. Thus, it recursively searches for Tuples or Sets and calls clone on them.
     this.clone = function() {
         var dupe = [];
@@ -205,6 +201,9 @@ function Set(array, throwDupError, name) {
 
     //A.cartesianProduct(B) = A x B
     this.cartesianProduct = function(otherSet) {
+        if(typeof(otherSet) != "object" || !(otherSet instanceof Set)){
+            throw "otherSet is not of Set type";
+        }
         var answer = [];
         for (var i=0; i<this.cardinality(); i++) {
             for (var j=0; j<otherSet.cardinality(); j++) {
@@ -256,6 +255,20 @@ function Set(array, throwDupError, name) {
         return new Set(randFromArray(this.elements,maxSize));
     };
 
+    // Returns a new set containing the elements in this but not in otherSet
+    this.relativeComplement = function(otherSet){
+        if(typeof(otherSet) != "object" || !(otherSet instanceof Set)){
+            throw "otherSet is not of Set type";
+        }
+        var result = [];
+        for( var i = 0; i < this.cardinality(); i++){
+            if(! otherSet.hasElement(this.elementAt(i))){
+                result.push(this.elementAt(i));
+            }
+        }
+        return new Set(result);
+    };
+
 };
 
 function Tuple(array) {
@@ -267,7 +280,7 @@ function Tuple(array) {
 
     this.elementAt = function(index) {
         return this.elements[index];
-    }
+    };
 
     this.indexOfElement = function(element) {
         for (var i=0; i<this.cardinality(); i++) {
@@ -358,5 +371,104 @@ function Tuple(array) {
     this.removeElement = function(element) {
         return this.removeElementAtIndex(this.indexOfElement(element));
     };
+
+};
+
+function BinaryRelation(baseSet, pairSet, baseSetLabel){
+
+    // baseSet must be an instance of Set, otherwise there is a problem
+    if (typeof(baseSet) != "object" || ! baseSet instanceof Set) {
+        throw "illegal argument: BinaryRelation constructor takes two Set arguments";
+    }
+
+    if (typeof(baseSet) != "object" || ! pairSet instanceof Set) {
+        throw "illegal argument: BinaryRelation constructor takes two Set Arguments";
+    }
+
+    this.baseSet = baseSet.clone();
+    this.pairSet = pairSet.clone();
+
+    this.cartesianProduct =  this.baseSet.cartesianProduct(this.baseSet);
+
+    if (! this.cartesianProduct.hasSubset(pairSet)) {
+        throw "Illegal Argument: pairSet must be subset of baseSet cross baseSet";
+    }
+
+    this.isLegalPair = function(pair) {
+        return ( pair instanceof Tuple &&
+                pair.cardinality() == 2 &&
+                this.cartesianProduct.hasElement(pair));
+    };
+
+    for( var i = 0; i < pairSet.cardinality(); i++){
+        if(!this.isLegalPair(this.pairSet.elementAt(i))){
+            throw "BinaryRelation constructed with illegal pair at index " + i;
+        }
+    }
+
+    this.hasPair = function(pair){
+        return this.pairSet.hasElement(pair);
+    };
+
+    this.addElement = function(pair){
+        if (! this.isLegalPair(pair)) {
+            throw "illegal argument in BinaryRelation.addElement()";
+        }
+
+        this.pairSet.addElement(pair);
+    };
+
+    this.clone = function(){
+        return new BinaryRelation(this.baseSet, this.pairSet);
+    };
+
+    this.isReflexive = function(){
+        for( var i = 0; i<this.baseSet.cardinality(); i++){
+            if( ! (this.pairSet.hasElement(new Tuple([this.baseSet.elementAt(i),this.baseSet.elementAt(i)])))){
+                return false;
+            }
+        }
+        return true;
+    };
+
+    this.isSymmetric = function(){
+        for( var i = 0; i<this.pairSet.cardinality();i++){
+            var current = this.pairSet.elementAt(i);
+            if( ! (this.pairSet.hasElement(new Tuple([current.elementAt(1),current.elementAt(0)])))){
+                return false;
+            }
+        }
+        return true;
+    };
+
+    this.isTransitive = function(){
+        // Start two loops through the list and set locals for ease...
+        for( var i = 0; i<this.pairSet.cardinality();i++){
+            var elem1 = this.pairSet.elementAt(i);
+            for( var o = 0; o < this.pairSet.cardinality(); o++){
+                var elem2 = this.pairSet.elementAt(o);
+                // If the second starts from the end of the first pair, 
+                if( isEquivalentTo(elem1.elementAt(1),elem2.elementAt(0) )){
+                    //Check to make sure that the pairset contains the transitive pair
+                    if( ! (this.pairSet.hasElement(new Tuple([elem1.elementAt(0),elem2.elementAt(1)])))){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    };
+
+    this.toString = function(){
+        var comp = this.cartesianProduct.relativeComplement(this.pairSet);
+        if(!baseSetLabel ||
+            this.pairSet.cardinality() <= comp.cardinality()){
+            return this.pairSet.toString();
+        } else{
+            return baseSetLabel + "x" + baseSetLabel+" - " + comp.toString();
+        }
+    };
+
+
 
 };
