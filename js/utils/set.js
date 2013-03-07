@@ -498,20 +498,9 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel){
             }
         }
     };
-    this.isSameTupleAs = function(otherTuple) {
-        if(!(otherTuple instanceof Tuple) || this.cardinality()!=otherTuple.cardinality()){
-            return false;
-        }
-        for(var i = 0; i<this.cardinality();i++){
-            if(!isEquivalentTo(this.elements[i],otherTuple.elements[i])){
-                return false;
-            }
-        }
-        return true;
-    };
 
     this.isSameRelationAs = function(otherRelation){
-        if((typeof(otherRelation)!="object") || !(otherTuple instanceof BinaryRelation)){
+        if((typeof(otherRelation)!="object") || !(otherRelation instanceof BinaryRelation)){
             return false;
         }
         return this.baseSet.isSameSetAs(otherRelation.baseSet) && this.pairSet.isSameSetAs(otherRelation.pairSet);
