@@ -1,4 +1,4 @@
-/**
+/*
 
   awesomeSets.js 
 
@@ -35,7 +35,13 @@ function Node(centerX, centerY, label, radius, borderColor, fillColor, borderWid
         return str;
     }
 }
-
+/** Function to determine if two items are the same.
+ *  Checks equality of strings, numberse, booleans, Awesome.Set, Awesome.Tuple, and Awesome.BianryRelation
+ *  @param {object} x The first of the two values
+ *  @param {object} y The second of the two values
+ *  @returns {boolean} A boolean representing the outcome
+ *  @throws Throws if there is an unexpected type found (non string/number/boolean/object)
+ */
 function isEquivalentTo(x,y) {
     if(x==null || y==null){
         return false;
@@ -51,6 +57,8 @@ function isEquivalentTo(x,y) {
                 return x.isSameSetAs(y);
             } else if (x instanceof Tuple && y instanceof Tuple){
                 return x.isSameTupleAs(y);
+            } else if (x instanceof BinaryRelation && y instanceof BinaryRelation){
+                return x.isSameRelationAs(y);
             } else{
                 return false;
             }
@@ -59,13 +67,23 @@ function isEquivalentTo(x,y) {
     }
 };
 
-//If count is passed, returns an array of length count whose elements are
-//randomly chosen from arr. If arr does not have any duplicate elements, the
-//returned array will not have duplicates either.
-//If count is not passed, it returns a random element from arr
+/** Method to select either a random element or a new array with a random number of elements from an array.
+ *  If count is not present, a single random element will be returned.
+ *  If count is present, the result array will be of size count. The random array will not use an element
+ *  from the same source index more than once. Thus, if the source array has no duplicates, the random
+ *  array will not have duplicates as well.
+ *  @param {array} arr The array of elements to be selected from
+ *  @param {int} [count] The number of elements in the result array
+ *  @returns {object|array} A single random element, or a new array consisting of random elements
+ *  @throws Throws if count is not within bounds of the array
+ */
 function randFromArray(arr, count) {
+    if(count < 0 || count > arr.length){
+        throw "count is out of bounds in randFromArray"
+    }
+    arr = arr.slice(0);
     if (count == null){
-        return arr[_.rand(arr.length)];
+        return arr[_.random(arr.length)];
     } else{
         return _.map(arr.slice(0,count),function(){
                 return arr.splice(_.random(0,arr.length-1),1)[0];
@@ -73,40 +91,66 @@ function randFromArray(arr, count) {
     }
 };
 
-//Creates a random array with size between minElems and maxElems (inclusive)
-//Elements are selected from sourceSet if passed, or a default set.
-function randArrayOfElements(maxElems,minElems,sourceSet) {
-    var source = sourceSet || [
+/** Method to generate a random array of elements from one of three built in,
+ *  primitive sets (letters 't' through 'z', 'a' through 'f', or numbers 1
+ *  throught 7), or the sourceSet, if present. Randomly selects the size from
+ *  between maxElems and minElems, incusively.
+ *  @param {int} [maxElems=5] The maximum number of elements in the result array
+ *  @param {int} [minElems=1] The minimum number of elements in the result array
+ *  @param {array} [sourceArray] The source array, or one of the primitives described above.
+ *  @returns {array} An array of elements
+ */
+function randArrayOfElements(maxElems,minElems,sourceArray) {
+    var source = sourceArray || [
         ["t","u","v","w","x","y","z"],
         ["a","b","c","d","e","f"],
         [1,2,3,4,5,6,7]][_.random(2)];
     minElems = minElems || 1;
-    maxElems = maxElems || _.random(minElems,5);
+    maxElems = maxElems || 5;
     maxElems = Math.min(source.length,maxElems);
     minElems = Math.min(maxElems,minElems);
-
-    //Set the source array from which elements will be selected.
-    //If the sourceSet parameter is passed, that will be used; otherwise, it
-    //will use one of the default arrays.
     return randFromArray(source,_.random(minElems,maxElems));
 };
 
+/** Represents a set of elements.
+ *  The constructor takes a source array, but if it is not passed, it will generate a random source array using
+ *  {@linkcode randArrayOfElements}. Sets contain no duplicate elements.
+ *  @constructor
+ *  @param {array} [array] The source array of elements to be used
+ *  @param {boolean} [throwDupError] Whether or not the constructor should throw an error if duplicate items are found
+ *  @param {name} [string] The name of this set, to be used when generating an SVG.
+ */
 function Set(array, throwDupError, name) {
     //Initialize temp to the passed array or a random array
     var temp = array || randArrayOfElements();
+    
     //The 'elements' member of a Set object is the array that holds the
     //members of the set. It will not have duplicate elements.
     this.elements = [];
 
-    //This is a member function of the Set class
+    /** Determines the cardinality (size) of the set object.
+     *  @returns {int} The cardinality
+     */
     this.cardinality = function() {
         return this.elements.length;
     };
 
+    /** Returns the element of the set at the given index. Sets are zero-indexed.
+     *  @param {int} index The index of the element desired
+     *  @returns {object} The element at that index
+     *  @throws Throws if the index is out of range
+     */
     this.elementAt = function(index) {
+        if(index>=this.cardinality()){
+            throw "index out of bounds during Set.elementAt";
+        }
         return this.elements[index];
     };
 
+    /** Searches the set for the given element and returns its index, or -1 if not found.
+     *  @param {object} element The element to be searched for
+     *  @returns {int} The index of the element, or -1
+     */
     this.indexOfElement = function(element) {
         for (var i=0; i<this.cardinality(); i++) {
             if (isEquivalentTo(element,this.elements[i])){
@@ -116,12 +160,23 @@ function Set(array, throwDupError, name) {
         return -1;
     };
 
+    /** Searches the set for the given element, and returns whether or not the element was found
+     *  @param {object} element The element to be searched for
+     *  @returns {boolean} Whether or not the element was found
+     */
     this.hasElement = function(element) {
         return this.indexOfElement(element)!=-1;
     };
 
+    /** Adds the element to the set, ignoring all null elements, and automatically deduping.
+     *  @param {object} element The element to be added to the set.
+     *  @throws Throws if passed a non-primitive object which is not a Set or Tuple
+     */
     this.addElement = function(element) {
         if(element!=null){
+            if((typeof(element) == "object") && !(element instanceof Set || element instanceof Tuple)){
+                throw "Invalid object passed to Set.addElement";
+            }
             if(!this.hasElement(element)){
                 this.elements.push(element);
             }
@@ -151,6 +206,11 @@ function Set(array, throwDupError, name) {
     }
 
     // Performs a deep clone. Thus, it recursively searches for Tuples or Sets and calls clone on them.
+    /** Performs a deep clone on the Set, recursively calling clone on any {@linkcode Set}
+     *  or {@linkcode Tuple} objects found within.
+     *  @returns {Set} A new Set object
+     *  @throws Throws if it finds an object which is not a {@linkcode Set} or {@linkcode Tuple}
+     */
     this.clone = function() {
         var dupe = [];
         for(var i = 0; i < this.cardinality();i++){
@@ -167,15 +227,25 @@ function Set(array, throwDupError, name) {
         return new Set(dupe);
     };
 
+    /** Shuffles the elements within this set into a new order. This only affects the
+     *  string representation of the set and the indexes used and returned by elementAt
+     *  and indexOfElement, respectively.
+     */
     this.shuffle = function() {
         this.elements.sort(function() { return 0.5 - Math.random();});
     };
 
+    /** Generates a string representation of the set, using braces which are escaped with a \\
+     *  in order to be used in Khan Academy exercises laTeX fields.
+     *  @returns {string} The escaped string representation of the set
+     */
     this.laTeXformat = function() {
         return this.format().replace(/{/g,"\\{").replace(/}/g,"\\}");
     };
 
-    //Concatenate all the elements together into a string representing the set
+    /** Generates a string representation of the set.
+     *  @returns {string} The string representation of the set
+     */
     this.format = function() {
         var output = "{";
         for(var i = 0; i < this.cardinality(); i++){
@@ -197,9 +267,17 @@ function Set(array, throwDupError, name) {
         output += "}";
         return output;
     };
+
+    /** Same as {@linkcode Set#format}
+     *
+     */
     this.toString = this.laTeXformat;
 
-    //A.cartesianProduct(B) = A x B
+    /** Performs the cartesian product of this set with another set (e.g., A.cartesianProduct(B) = A x B).
+     *  The return is a Set of {@linkcode Tuple} objects of cardinality this.cardinality() * otherset.cardinality().
+     *  @param {Set} otherSet The second set to be used in the cartesian product
+     *  @returns {Set} A set of Tuples, representing the cartesian product
+     */
     this.cartesianProduct = function(otherSet) {
         if(typeof(otherSet) != "object" || !(otherSet instanceof Set)){
             throw "otherSet is not of Set type";
@@ -214,7 +292,10 @@ function Set(array, throwDupError, name) {
         return new Set(answer);
     };
 
-    //Returns true if otherSet is a subset or equal to this set.
+    /** Checks to see if otherSet is a subset of this Set.
+     *  @param {Set} otherSet The Set to be checked for subset eligibility
+     *  @return {boolean} Whether or not otherSet is a subset of this.
+     */
     this.hasSubset = function(otherSet) {
         if(!(otherSet instanceof Set)){
             return false;
@@ -228,34 +309,94 @@ function Set(array, throwDupError, name) {
         return true;
     };
 
-
-    //Returns true if this set contains the subset otherset.
-    //Equivalent to otherset \subset this in laTeX
+    /** Checks to see if otherSet is a proper subset of this Set. Identical to
+     *  this.hasSubset(otherSet) && !otherSet.hasSubset(this).
+     *  @param {Set} otherSet The Set to be checked for proper subset eligibility
+     *  @return {boolean} Whether or not otherSet is a proper subset of this.
+     */
     this.hasProperSubset = function(otherSet) {
         return this.hasSubset(otherSet) && !otherSet.hasSubset(this);
     };
 
+    /** Checks to see if the two sets are equal
+     *  @param {Set} otherSet The Set to be compared against
+     *  @return {boolean} Whether or not the given Set is equal to this.
+     */
     this.isSameSetAs = function(otherSet) {
         return this.hasSubset(otherSet) && otherSet.hasSubset(this);
     };
 
+    /** Removes and returns the element at the given index from this Set.
+     *  @param {int} index The index to be removed
+     *  @returns {object} The object removed from the Set.
+     *  @throws Throws if the index is out of bounds.
+     */
     this.removeElementAtIndex = function(index) {
         if(index>=0 && index < this.cardinality()){
             return this.elements.splice(index,1);
         }
-        throw "Index out of bounds";
+        throw "Index out of bounds during Set.removeElementAtIndex";
     };
 
+    /** Searches for, removes, and returns the given element from this Set.
+     *  @param {object} element The element to be removed
+     *  @returns {object} The element removed
+     *  @throws Throws if the element is not found in the Set.
+     */
     this.removeElement = function(element) {
         return this.removeElementAtIndex(this.indexOfElement(element));
     };
 
-    this.getRandomSubset = function(maxSize) {
-        maxSize = maxSize || _.random(0,this.cardinality()-1);
-        return new Set(randFromArray(this.elements,maxSize));
+    /** Generates and returns random subset, performing a deep clone on each
+     *  Set or Tuple within the new subset. If no parameters, cardinality of
+     *  subset will be random. If one parameter, cardinality of subset will
+     *  be of that parameter. If two parameters are given, cardinality of the
+     *  subset will be between the two given parameters, inclusively. The
+     *  subset is not a proper subset.
+     *  @param {int} [maxSize] The specific, or maximum size of this subset
+     *  @param {int} [minSize] The minimum size of this subset
+     *  @returns {Set} A subset of this Set
+     *  @throws Throws if maxSize or minSize are out of bounds for this Set.
+     */
+    this.getRandomSubset = function(maxSize,minSize) {
+        minSize = minSize || 0;
+        maxSize = maxSize || this.cardinality();
+        if(maxSize > this.cardinality() || minSize < 0 || minSize > maxSize){
+            throw "size out of bounds for Set.getRandomSubset";
+        }
+        maxSize = _.random(minSize,maxSize);
+        var tempset = new Set(randFromArray(this.elements,maxSize));
+        for(var i = 0; i < tempset.cardinality(); i++){
+            if(typeof(tempset.elements[i]) == "object" &&
+                 (tempset.elements[i] instanceof Set || tempset.elements[i] instanceof Tuple)){
+                tempset.elements[i] = tempset.elements[i].clone();
+            }
+        }
+        return tempset;
     };
+    /** Same as {@linkcode Set#getRandomSubset} except that this method returns a
+     *  proper subset.
+     *  @param {int} [maxSize] The specific, or maximum size of this subset
+     *  @param {int} [minSize] The minimum size of this subset
+     *  @returns {Set} A proper subset of this Set
+     *  @throws Throws if maxSize or minSize are out of bounds for this Set.
+     */
+    this.getRandomProperSubset = function(maxSize,minSize){
+        minSize = minSize || 0;
+        maxSize = maxSize || this.cardinality()-1;
+        if(maxSize >= this.cardinality() || minSize < 0 || minSize > maxSize){
+            throw "size out of bounds for Set.getRandomProperSubset";
+        }
+        return this.getRandomSubset(maxSize,minSize);
+    }
 
-    // Returns a new set containing the elements in this but not in otherSet
+    /** Generates a new Set containing the relative complement between this Set
+     *  and the parameter. A relative complement contains all elements in this Set
+     *  but not contained in the parameter.
+     *  @param {Set} otherSet The other Set to be used in the relative complement
+     *  @returns {Set} A new Set containing the relative complement
+     *  @throws Throws if otherSet is not a Set
+     */
     this.relativeComplement = function(otherSet){
         if(typeof(otherSet) != "object" || !(otherSet instanceof Set)){
             throw "otherSet is not of Set type";
@@ -271,19 +412,38 @@ function Set(array, throwDupError, name) {
 
 };
 
+/** Represents a Tuple or an ordered list of elements.
+ *  The constructor takes a source array, but if it is not passed, it will generate a random source array using
+ *  {@linkcode randArrayOfElements}.
+ *  @constructor
+ *  @param {array} [array] The source array of elements to be used
+ */
 function Tuple(array) {
     this.elements = array || randArrayOfElements();
 
+    /** Determines the cardinality (size) of the Tuple object.
+     *  @returns {int} The cardinality
+     */
     this.cardinality = function(){
         return this.elements.length;
     };
 
+    /** Returns the element of the Tuple at the given index. Tuples are zero-indexed.
+     *  @param {int} index The index of the element desired
+     *  @returns {object} The element at that index
+     *  @throws Throws if the index is out of range
+     */
     this.elementAt = function(index) {
         return this.elements[index];
     };
 
-    this.indexOfElement = function(element) {
-        for (var i=0; i<this.cardinality(); i++) {
+    /** Searches the Tuple for the given element and returns its index, or -1 if not found.
+     *  @param {object} element The element to be searched for
+     *  @param {int} [after] The index to start searching at
+     *  @returns {int} The index of the element, or -1
+     */
+    this.indexOfElement = function(element, after) {
+        for (var i= (after || 0); i<this.cardinality(); i++) {
             if (isEquivalentTo(element,array[i])){
                 return i;
             }
@@ -291,21 +451,29 @@ function Tuple(array) {
         return -1;
     };
 
+    /** Searches the Tuple for the given element, and returns whether or not the element was found
+     *  @param {object} element The element to be searched for
+     *  @returns {boolean} Whether or not the element was found
+     */
     this.hasElement = function(element) {
         return this.indexOfElement(element)!=-1;
     };
 
+    /** Adds the element to the Tuple, ignoring all null elements, and automatically deduping.
+     *  @param {object} element The element to be added to the Tuple.
+     *  @throws Throws if passed a non-primitive object which is not a Set or Tuple
+     */
     this.addElement = function(element) {
         if(element!=null){
             this.elements.push(element);
         }
     };
 
-    this.laTeXformat = function() {
-        return this.format().replace("{","\\{").replace("}","\\}");
-    };
-
-    // Performs a deep clone. Thus, it recursively searches for Tuples or Sets and calls clone on them.
+    /** Performs a deep clone on the {@linkcode Tuple}, recursively calling clone on any {@linkcode Set}
+     *  or {@linkcode Tuple} objects found within.
+     *  @returns {Tuple} A new Tuple object
+     *  @throws Throws if it finds an object which is not a {@linkcode Set} or {@linkcode Tuple}
+     */
     this.clone = function() {
         var dupe = [];
         for(var i = 0; i < this.cardinality();i++){
@@ -313,7 +481,7 @@ function Tuple(array) {
                 if(this.elements[i] instanceof Set || this.elements[i] instanceof Tuple){
                     dupe.push(this.elements[i].clone());
                 } else{
-                    throw "Found non Set or Tuple object in Set while cloning";
+                    throw "Found non Set or Tuple object in Tuple while cloning";
                 }
             } else{
                 dupe.push(this.elements[i]);
@@ -322,6 +490,17 @@ function Tuple(array) {
         return new Tuple(dupe);
     };
 
+    /** Generates a string representation of the Tuple, using braces which are escaped with a \\
+     *  in order to be used in Khan Academy exercises laTeX fields.
+     *  @returns {string} The escaped string representation of the Tuple
+     */
+    this.laTeXformat = function() {
+        return this.format().replace("{","\\{").replace("}","\\}");
+    };
+
+    /** Generates a string representation of the Tuple.
+     *  @returns {string} The string representation of the Tuple
+     */
     this.format =function() {
         var output = "(";
         for(var i = 0; i < this.cardinality(); i++){
@@ -342,10 +521,18 @@ function Tuple(array) {
         output += ")";
         return output;
     };
+
+    /** Same as {@linkcode Tuple#format}
+     *  @method
+     *  @see Tuple#format
+     *  @returns {string} The string representation of the Tuple
+     */
     this.toString = this.laTeXformat;
 
-    //They are only the same tuple if they are both Tuples, the otherTuple has the same cardinality, 
-    //and each tuple contains the same elements in the same order
+    /** Checks to see if the two Tuples are equal
+     *  @param {Tuple} otherTuple The Tuple to be compared against
+     *  @return {boolean} Whether or not the given Tuple is equal to this.
+     */
     this.isSameTupleAs = function(otherTuple) {
         if((typeof(otherTuple) != "object") || !(otherTuple instanceof Tuple) || this.cardinality()!=otherTuple.cardinality()){
             return false;
@@ -358,6 +545,11 @@ function Tuple(array) {
         return true;
     };
 
+    /** Removes and returns the element at the given index from this Set.
+     *  @param {int} index The index to be removed
+     *  @returns {object} The object removed from the Set.
+     *  @throws Throws if the index is out of bounds.
+     */
     this.removeElementAtIndex = function(index) {
         if(index>=0 && index < this.cardinality()){
             this.elements.splice(index,1);
@@ -366,8 +558,11 @@ function Tuple(array) {
         return false;
     };
 
-    //Note: Since tuples can contain duplicate elements, this will always
-    //remove the first match
+    /** Searches for, removes, and returns the first match for the given element from this Set.
+     *  @param {object} element The element to be removed
+     *  @returns {object} The element removed
+     *  @throws Throws if the element is not found in the Set.
+     */
     this.removeElement = function(element) {
         return this.removeElementAtIndex(this.indexOfElement(element));
     };
