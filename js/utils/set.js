@@ -1,11 +1,11 @@
 /*
 
-  awesomeSets.js 
+   awesomeSets.js 
 
-  Original author, Johan Henkens and Phill Conrad
-  UCSB CS Dept. for Project Awesome
+   Original author, Johan Henkens and Phill Conrad
+   UCSB CS Dept. for Project Awesome
 
-  Original Version: Fall 2012
+   Original Version: Fall 2012
 
 */
 
@@ -123,7 +123,7 @@ function randArrayOfElements(maxElems,minElems,sourceArray) {
 function Set(array, throwDupError, name) {
     //Initialize temp to the passed array or a random array
     var temp = array || randArrayOfElements();
-    
+
     //The 'elements' member of a Set object is the array that holds the
     //members of the set. It will not have duplicate elements.
     this.elements = [];
@@ -368,7 +368,7 @@ function Set(array, throwDupError, name) {
         var tempset = new Set(randFromArray(this.elements,maxSize));
         for(var i = 0; i < tempset.cardinality(); i++){
             if(typeof(tempset.elements[i]) == "object" &&
-                 (tempset.elements[i] instanceof Set || tempset.elements[i] instanceof Tuple)){
+                    (tempset.elements[i] instanceof Set || tempset.elements[i] instanceof Tuple)){
                 tempset.elements[i] = tempset.elements[i].clone();
             }
         }
@@ -545,9 +545,9 @@ function Tuple(array) {
         return true;
     };
 
-    /** Removes and returns the element at the given index from this Set.
+    /** Removes and returns the element at the given index from this tuple.
      *  @param {int} index The index to be removed
-     *  @returns {object} The object removed from the Set.
+     *  @returns {object} The object removed from the Tuple.
      *  @throws Throws if the index is out of bounds.
      */
     this.removeElementAtIndex = function(index) {
@@ -558,10 +558,10 @@ function Tuple(array) {
         return false;
     };
 
-    /** Searches for, removes, and returns the first match for the given element from this Set.
+    /** Searches for, removes, and returns the first match for the given element from this Tuple.
      *  @param {object} element The element to be removed
      *  @returns {object} The element removed
-     *  @throws Throws if the element is not found in the Set.
+     *  @throws Throws if the element is not found in the Tuple.
      */
     this.removeElement = function(element) {
         return this.removeElementAtIndex(this.indexOfElement(element));
@@ -656,7 +656,7 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel){
     this.toString = function(ignoreLabel){
         var comp = this.cartesianProduct.relativeComplement(this.pairSet);
         if(!baseSetLabel || ignoreLabel ||
-            this.pairSet.cardinality() <= comp.cardinality()){
+                this.pairSet.cardinality() <= comp.cardinality()){
             return this.pairSet.toString();
         } else{
             return baseSetLabel + "x" + baseSetLabel+" - " + comp.toString();
@@ -719,18 +719,18 @@ function makeRandomRelation(sourceSet, sourceLabel, mask){
     var result = null;
     var cartesianProduct = sourceSet.cartesianProduct(sourceSet);
     if( (mask & 9) == 9 ||
-        (mask & 18) == 18 ||
-        (mask & 36) == 36){
+            (mask & 18) == 18 ||
+            (mask & 36) == 36){
         throw "Invalid mask combination!";
     }
     while(!result || 
-        ((mask & 1) && !(result.isReflexive())) ||
-        ((mask & 2) && !(result.isSymmetric())) ||
-        ((mask & 4) && !(result.isTransitive()))||
-        ((mask & 8) && (result.isReflexive()))  ||
-        ((mask & 16) && (result.isSymmetric())) ||
-        ((mask & 32) && (result.isTransitive()))
-        ){
+            ((mask & 1) && !(result.isReflexive())) ||
+            ((mask & 2) && !(result.isSymmetric())) ||
+            ((mask & 4) && !(result.isTransitive()))||
+            ((mask & 8) && (result.isReflexive()))  ||
+            ((mask & 16) && (result.isSymmetric())) ||
+            ((mask & 32) && (result.isTransitive()))
+         ){
         result = new BinaryRelation(sourceSet,cartesianProduct.getRandomSubset(),sourceLabel);
     }
     return result;
