@@ -1,9 +1,10 @@
-function generateReflexiveSymmetricTransitiveQuestions(count){
+function generateReflexiveSymmetricTransitiveQuestions(count, setName){
     var arr = [];
-    var sourceSet = new Set(["a","b","c"]);
+    var setLabel = setName || "A";
+    var sourceSet = new Set(["a","b","c"], false, setLabel);
     var temp = null;
     while(arr.length < count){
-        temp = makeRandomRelation(sourceSet,"A");
+        temp = makeRandomRelation(sourceSet);
         for(var i = 0; i<arr.length;i++){
             if(arr[i].isSameRelationAs(temp)){
                 temp = null;
@@ -14,7 +15,7 @@ function generateReflexiveSymmetricTransitiveQuestions(count){
             arr.push(temp);
         }
     }
-    var questionBase = "Let A be "+sourceSet.format()+". Let the relation R be ";
+    var questionBase = "Let " + sourceSet.name + " be "+sourceSet.format()+". Let the relation R be ";
     var questionEnd = ". Which of the following statements about R is true?";
     for(var i = 0; i < arr.length; i++){
         temp = arr[i];

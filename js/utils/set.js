@@ -118,7 +118,7 @@ function randArrayOfElements(maxElems,minElems,sourceArray) {
  *  @constructor
  *  @param {array} [array] The source array of elements to be used
  *  @param {boolean} [throwDupError] Whether or not the constructor should throw an error if duplicate items are found
- *  @param {name} [string] The name of this set, to be used when generating an SVG.
+ *  @param {name} [string] The name of this set, to be used when generating an SVG, and sometimes when printing the Set.
  */
 function Set(array, throwDupError, name) {
     //Initialize temp to the passed array or a random array
@@ -340,11 +340,14 @@ function Set(array, throwDupError, name) {
 
     /** Searches for, removes, and returns the given element from this Set.
      *  @param {object} element The element to be removed
-     *  @returns {object} The element removed
-     *  @throws Throws if the element is not found in the Set.
+     *  @returns {object} The element removed, or false if the element is not found in the Set.
      */
     this.removeElement = function(element) {
-        return this.removeElementAtIndex(this.indexOfElement(element));
+        try {
+            return this.removeElementAtIndex(this.indexOfElement(element));
+        } catch(err) {
+            return false;
+        }
     };
 
     /** Generates and returns random subset, performing a deep clone on each
@@ -552,41 +555,45 @@ function Tuple(array) {
      */
     this.removeElementAtIndex = function(index) {
         if(index>=0 && index < this.cardinality()){
-            this.elements.splice(index,1);
-            return true;
+            return this.elements.splice(index,1);
         }
-        return false;
+        throw "Index out of bounds during Tuple.removeElementAtIndex";
     };
 
     /** Searches for, removes, and returns the first match for the given element from this Tuple.
      *  @param {object} element The element to be removed
-     *  @returns {object} The element removed
-     *  @throws Throws if the element is not found in the Tuple.
+     *  @returns {object} The element removed, or false if the element is not found in the Tuple.
      */
     this.removeElement = function(element) {
-        return this.removeElementAtIndex(this.indexOfElement(element));
+        try {
+            return this.removeElementAtIndex(this.indexOfElement(element));
+        } catch(err) {
+            return false;
+        }
     };
 
 };
 
-function BinaryRelation(baseSet, pairSet, baseSetLabel, secondSet, secondSetLabel){
+function BinaryRelation(baseSet, pairSet, secondSet){
     // baseSet must be an instance of Set, otherwise there is a problem
     if (typeof(baseSet) != "object" || ! baseSet instanceof Set) {
         throw "illegal argument: BinaryRelation constructor takes at least two Set arguments";
     }
 
+    // pairSet must be an instance of Set, otherwise there is a problem
     if (typeof(pairSet) != "object" || ! pairSet instanceof Set) {
         throw "illegal argument: BinaryRelation constructor takes at least two Set Arguments";
     }
 
-    if (typeof(secondSet) != "object" || ! secondSet instanceof Set) {
-        throw "illegal argument: secondSet must be a Set object";
+    if(secondSet) {
+        // secondSet must be an instance of Set, otherwise there is a problem
+        if (typeof(secondSet) != "object" || ! secondSet instanceof Set) {
+            throw "illegal argument: secondSet must be a Set object";
+        }
     }
 
     this.baseSet = baseSet.clone();
     this.pairSet = pairSet.clone();
-    this.baseSetLabel = baseSetLabel;
-    this.secondSetLabel = secondSetLabel;
 
     if (!secondSet) {
         this.cartesianProduct =  this.baseSet.cartesianProduct(this.baseSet);
@@ -679,13 +686,87 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel, secondSet, secondSetLabe
         return true;
     };
 
+    this.isFunction = function(){
+        //Check that each input is related to exactly one output.
+        //i.e. check that each element in baseSet (the domain) is the first
+        //element of exactly one tuple of pairSet (the relation), and that the
+        //second element of every tuple of pairSet is an element of secondSet
+        //(the codomain)
+        var domain = this.baseSet.clone();
+        for(var i = 0; i<this.pairSet.cardinality(); i++){
+            var currentPair = this.pairSet.elementAt(i);
+            //Attempt to remove the first element of currentPair from domain.
+            //If this is a function, it must be in domain. Additionally, it
+            //should only be the first element of one pair, so if it was 
+            //already removed from domain, we know this is not a function.
+            if(!domain.removeElement(currentPair.elementAt(0))) {
+                return false;
+            }
+            //We also have to make sure that the second element of currentPair 
+            //is an element of secondSet. However, this was already verified by
+            //checking that pairSet is a subset of baseSet cross secondSet.
+            //The second element of these pairs can appear multiple times, so
+            //we don't call removeElement as above. (e.g. for the function
+            //f(x) = 1, 1 would be the second element of every pair)            
+        }
+        //Now make sure that all elements from domain were the first element of
+        //one of the pairs in pairSet. To do this, simply make sure all of the
+        //elements of domain have been removed.
+        if(domain.cardinality() > 0) {
+            return false;
+        }
+        return true;
+    };
+
+    this.isOneToOne = function(){
+        //only functions can be one-to-one
+        if(!this.isFunction()) {
+            return false;
+        }
+        //If f(a) = f(b) then a = b. Checking this just means checking for
+        //uniqueness in the second element of all the pairs in pairSet. So the
+        //code is almost identical to checking whether or not the relation is a
+        //function
+        var codomain = this.secondSet.clone();
+        for(var i = 0; i<this.pairSet.cardinality(); i++){
+            var currentPair = this.pairSet.elementAt(i);
+            //Attempt to remove the second element of currentPair from domain.
+            //If this is a one-to-one, it should only be the second element of
+            //one pair, so if it was already removed from codomain, we know
+            //this is not one-to-one
+            if(!codomain.removeElement(currentPair.elementAt(1))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    this.isOnto = function(){
+        //only functions can be onto
+        if(!this.isFunction()) {
+            return false;
+        }
+        //A function is onto if every element in the codomain is the image of
+        //some element in the domain. That is, the range should be equal to the
+        //codomain
+        var range = new Set([]);
+        for(var i = 0; i<this.pairSet.cardinality(); i++){
+            var currentPair = this.pairSet.elementAt(i);
+            range.addElement(currentPair.elementAt(1));
+        }
+        if(range.isSameSetAs(this.secondSet)){
+            return true;
+        }
+        return false;
+    }
+
     this.toString = function(ignoreLabel){
         var comp = this.cartesianProduct.relativeComplement(this.pairSet);
-        if(!this.baseSetLabel || ignoreLabel ||
+        if(ignoreLabel ||
             this.pairSet.cardinality() <= comp.cardinality()){
             return this.pairSet.toString();
         } else{
-            return this.baseSetLabel + "x" + (this.secondSet ? this.secondSetLabel : this.baseSetLabel) + " - " + comp.toString();
+            return this.baseSet.name + "x" + (this.secondSet ? this.secondSet.name : this.baseSet.name) + " - " + comp.toString();
         }
     };
 
@@ -758,7 +839,7 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel, secondSet, secondSetLabe
 //Not-Symmetric: 16
 //Not-Transitive: 32
 //Note that 1 & 8, 2 & 16, and 4 & 32 are not allowed together, as they are exclusive.
-function makeRandomRelation(sourceSet, sourceLabel, mask){
+function makeRandomRelation(sourceSet, mask){
     var result = null;
     var cartesianProduct = sourceSet.cartesianProduct(sourceSet);
     if( (mask & 9) == 9 ||
@@ -774,7 +855,7 @@ function makeRandomRelation(sourceSet, sourceLabel, mask){
             ((mask & 16) && (result.isSymmetric())) ||
             ((mask & 32) && (result.isTransitive()))
          ){
-        result = new BinaryRelation(sourceSet,cartesianProduct.getRandomSubset(),sourceLabel);
+        result = new BinaryRelation(sourceSet,cartesianProduct.getRandomSubset());
     }
     return result;
 }
