@@ -569,23 +569,40 @@ function Tuple(array) {
 
 };
 
-function BinaryRelation(baseSet, pairSet, baseSetLabel){
+function BinaryRelation(baseSet, pairSet, baseSetLabel, secondSet, secondSetLabel){
     // baseSet must be an instance of Set, otherwise there is a problem
     if (typeof(baseSet) != "object" || ! baseSet instanceof Set) {
-        throw "illegal argument: BinaryRelation constructor takes two Set arguments";
+        throw "illegal argument: BinaryRelation constructor takes at least two Set arguments";
     }
 
-    if (typeof(baseSet) != "object" || ! pairSet instanceof Set) {
-        throw "illegal argument: BinaryRelation constructor takes two Set Arguments";
+    if (typeof(pairSet) != "object" || ! pairSet instanceof Set) {
+        throw "illegal argument: BinaryRelation constructor takes at least two Set Arguments";
+    }
+
+    if (typeof(secondSet) != "object" || ! secondSet instanceof Set) {
+        throw "illegal argument: secondSet must be a Set object";
     }
 
     this.baseSet = baseSet.clone();
     this.pairSet = pairSet.clone();
+    this.baseSetLabel = baseSetLabel;
+    this.secondSetLabel = secondSetLabel;
 
-    this.cartesianProduct =  this.baseSet.cartesianProduct(this.baseSet);
+    if (!secondSet) {
+        this.cartesianProduct =  this.baseSet.cartesianProduct(this.baseSet);
 
-    if (! this.cartesianProduct.hasSubset(pairSet)) {
-        throw "Illegal Argument: pairSet must be subset of baseSet cross baseSet";
+        if (! this.cartesianProduct.hasSubset(pairSet)) {
+            throw "Illegal Argument: pairSet must be subset of baseSet cross baseSet";
+        }
+    }
+    else
+    {
+        this.secondSet = secondSet.clone();
+        this.cartesianProduct =  this.baseSet.cartesianProduct(this.secondSet);
+
+        if (! this.cartesianProduct.hasSubset(pairSet)) {
+            throw "Illegal Argument: pairSet must be subset of baseSet cross secondSet";
+        }
     }
 
     this.isLegalPair = function(pair) {
@@ -617,6 +634,9 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel){
     };
 
     this.isReflexive = function(){
+        if(this.secondSet) {
+            return false;
+        }
         for( var i = 0; i<this.baseSet.cardinality(); i++){
             if( ! (this.pairSet.hasElement(new Tuple([this.baseSet.elementAt(i),this.baseSet.elementAt(i)])))){
                 return false;
@@ -626,6 +646,9 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel){
     };
 
     this.isSymmetric = function(){
+        if(this.secondSet) {
+            return false;
+        }
         for( var i = 0; i<this.pairSet.cardinality();i++){
             var current = this.pairSet.elementAt(i);
             if( ! (this.pairSet.hasElement(new Tuple([current.elementAt(1),current.elementAt(0)])))){
@@ -636,6 +659,9 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel){
     };
 
     this.isTransitive = function(){
+        if(this.secondSet) {
+            return false;
+        }
         // Start two loops through the list and set locals for ease...
         for( var i = 0; i<this.pairSet.cardinality();i++){
             var elem1 = this.pairSet.elementAt(i);
@@ -655,15 +681,18 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel){
 
     this.toString = function(ignoreLabel){
         var comp = this.cartesianProduct.relativeComplement(this.pairSet);
-        if(!baseSetLabel || ignoreLabel ||
-                this.pairSet.cardinality() <= comp.cardinality()){
+        if(!this.baseSetLabel || ignoreLabel ||
+            this.pairSet.cardinality() <= comp.cardinality()){
             return this.pairSet.toString();
         } else{
-            return baseSetLabel + "x" + baseSetLabel+" - " + comp.toString();
+            return this.baseSetLabel + "x" + (this.secondSet ? this.secondSetLabel : this.baseSetLabel) + " - " + comp.toString();
         }
     };
 
     this.addReflextiveClosure = function(){
+        if(this.secondSet) {
+            return;
+        }
         for( var i = 0; i<this.baseSet.cardinality(); i++){
             var elem = this.baseSet.elementAt(i);
             this.addElement(new Tuple([elem,elem]));
@@ -671,6 +700,9 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel){
     };
 
     this.addSymmetricClosure = function(){
+        if(this.secondSet) {
+            return;
+        }
         for( var i = 0; i<this.pairSet.cardinality(); i++){
             var elem = this.pairSet.elementAt(i);
             this.addElement(new Tuple([elem.elementAt(1),elem.elementAt(0)]));
@@ -678,6 +710,9 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel){
     };
 
     this.addTransitiveClosure = function(){
+        if(this.secondSet) {
+            return;
+        }
         while(!this.isTransitive()){
             // Start two loops through the list and set locals for ease...
             for( var i = 0; i<this.pairSet.cardinality();i++){
@@ -698,7 +733,15 @@ function BinaryRelation(baseSet, pairSet, baseSetLabel){
         if((typeof(otherRelation)!="object") || !(otherRelation instanceof BinaryRelation)){
             return false;
         }
-        return this.baseSet.isSameSetAs(otherRelation.baseSet) && this.pairSet.isSameSetAs(otherRelation.pairSet);
+        if(!secondSet) {
+            return this.baseSet.isSameSetAs(otherRelation.baseSet) && this.pairSet.isSameSetAs(otherRelation.pairSet);
+        }
+        else {
+            if(!otherSet.secondSet) {
+                return false;
+            }
+            return this.baseSet.isSameSetAs(otherRelation.baseSet) && this.secondSet.isSameSetAs(otherRelation.secondSet) && this.pairSet.isSameSetAs(otherRelation.pairSet);
+        }
     };
 
     this.getCorrectDescription = function(){
