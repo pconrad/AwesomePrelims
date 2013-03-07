@@ -9,7 +9,4 @@ function MultipleChoiceQuestion(questionText,correctAnswer,incorrectAnswers){
             return this.incorrectAnswers;
         }
     };
-    this.helloWorld = function(){
-        return "Hello world!"
-    };
 };
