@@ -202,7 +202,7 @@ function Set(array, throwDupError, name) {
         var xBase = xBase || 30;
         var yBase = yBase || 20;
         str = "<rect x='" + (xBase-27) + "' y='" + (yBase-10) + "' width='55' height='" + (this.elements.length*60+20*2) + "' fill='white' stroke-width='2' stroke='black' />"
-            str += "\n<text x='" + (xBase-6) + "' y='" + (yBase-5) + "' fill='black'>" + this.name + "</text>"
+            str += "\n<text x='" + (xBase-6) + "' y='" + (yBase+5) + "' fill='black'>" + this.name + "</text>"
             _.each(this.elements, function(element, i) { str += "\n" + (new Node(xBase,yBase+60*(i+1), element.toString())).toSvg(); });
         return str;
     }
