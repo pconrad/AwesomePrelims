@@ -1,5 +1,5 @@
 
-test( "binaryRelationGraphs", 20, function() {
+test( "binaryRelationGraphs", 35, function() {
 
 	var xyz = new Set(["x","y","z"], false, "A");
 	var abcd = new Set(["a","b","c","d"], false, "B");
@@ -99,17 +99,64 @@ test( "binaryRelationGraphs", 20, function() {
 	    "new BinaryRelation(xyz, notARelation, abcd) throws error");
 
 	//One-to-one and Onto tests
-	/*
-one-to-one but NOT onto
 
-one-to-one and onto
+	//NOT one-to-one NOR onto: {('x','a'), ('y','a'), ('z','a')}
+	equal( R3.isOneToOne(), false,
+		"R3.isOneToOne(), false");
 
-NOT one-to-one but onto
+	equal( R3.isOnto(), false,
+		"R3.isOnto(), false");
 
-NOT one-to-one NOR onto
-['x','a'], ['y','a'], ['z','a']
+	equal( R3.isBijective(), false,
+		"R3.isBijective(), false");
 
-	*/
+	//one-to-one but NOT onto: {('x','d'), ('y','b'), ('z','a')}
+	var oneToOneNotOnto = new Set([new Tuple(['x','d']), new Tuple(['y','b']), new Tuple(['z','a'])]);
+	var R8 = new BinaryRelation(xyz, oneToOneNotOnto, abcd);
+
+	equal( R8.isOneToOne(), true,
+		"R8.isOneToOne()");
+
+	equal( R8.isOnto(), false,
+		"R8.isOnto(), false");
+
+	equal( R8.isBijective(), false,
+		"R8.isBijective(), false");
+
+	//NOT one-to-one but onto: {('a','z'), ('b','x'), ('c','y'), ('d','y')}
+	var ontoNotOneToOne = new Set([new Tuple(['a','z']), new Tuple(['b','x']), new Tuple(['c','y']), new Tuple(['d','y'])]);
+	var R9 = new BinaryRelation(abcd, ontoNotOneToOne, xyz);
+
+	equal( R9.isOneToOne(), false,
+		"R9.isOneToOne(), false");
+
+	equal( R9.isOnto(), true,
+		"R9.isOnto()");
+
+	equal( R9.isBijective(), false,
+		"R9.isBijective(), false");
+
+	//one-to-one and onto (bijective): {('x','x'),('y','y'),('z','z')}
+	equal( R7.isOneToOne(), true,
+		"R7.isOneToOne()");
+
+	equal( R7.isOnto(), true,
+		"R7.isOnto()");	
+
+	equal( R7.isBijective(), true,
+		"R7.isBijective()");
+
+	var anotherBijection = new Set([new Tuple(['x','z']), new Tuple(['y','x']), new Tuple(['z','y'])]);
+	var R10 = new BinaryRelation(xyz, anotherBijection, xyz);
+
+	equal( R10.isOneToOne(), true,
+		"R10.isOneToOne()");
+
+	equal( R10.isOnto(), true,
+		"R10.isOnto()");	
+
+	equal( R10.isBijective(), true,
+		"R10.isBijective()");
 
     });
 

@@ -741,6 +741,8 @@ function BinaryRelation(baseSet, pairSet, secondSet){
         return true;
     }
 
+    this.isInjective = this.isOneToOne;
+
     this.isOnto = function(){
         //only functions can be onto
         if(!this.isFunction()) {
@@ -758,6 +760,20 @@ function BinaryRelation(baseSet, pairSet, secondSet){
             return true;
         }
         return false;
+    }
+
+    this.isSurjective = this.isOnto;
+
+    this.isBijective = function(){
+        //The domain and codomain must have the same cardinality for it to be
+        //possible that this is a bijection. (Though that is NOT a sufficient
+        //condition! Just a necessary one)
+        if(this.baseSet.cardinality() != this.secondSet.cardinality()){
+            return false;
+        }
+        //The following alone is sufficient, but the above is an optimization
+        //to return false faster in the event that the cardinalities don't match
+        return this.isOneToOne() && this.isOnto();
     }
 
     this.toString = function(ignoreLabel){
