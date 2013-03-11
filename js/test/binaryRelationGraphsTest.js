@@ -158,5 +158,12 @@ test( "binaryRelationGraphs", 35, function() {
 	equal( R10.isBijective(), true,
 		"R10.isBijective()");
 
+	//TODO: add some tests for functions where the binary relation is over
+	//a single set (rather than between two sets), make sure one-to-one,
+	//onto, bijective still work, etc.
+	//for this the relation will look like:
+	//var R11 = new BinaryRelation(xyz,pairSet);
+	//with no third parameter (no secondSet)
+
     });
 

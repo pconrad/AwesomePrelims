@@ -729,7 +729,13 @@ function BinaryRelation(baseSet, pairSet, secondSet){
         //uniqueness in the second element of all the pairs in pairSet. So the
         //code is almost identical to checking whether or not the relation is a
         //function
-        var codomain = this.secondSet.clone();
+        var codomain = new Set([]);
+        if(secondSet){
+            codomain = this.secondSet.clone();
+        }
+        else{
+            codomain = this.baseSet.clone();
+        }
         for(var i = 0; i<this.pairSet.cardinality(); i++){
             var currentPair = this.pairSet.elementAt(i);
             //Attempt to remove the second element of currentPair from domain.
@@ -758,8 +764,14 @@ function BinaryRelation(baseSet, pairSet, secondSet){
             var currentPair = this.pairSet.elementAt(i);
             range.addElement(currentPair.elementAt(1));
         }
-        if(range.isSameSetAs(this.secondSet)){
-            return true;
+        if(secondSet){
+            if(range.isSameSetAs(this.secondSet)){
+                return true;
+            }
+        } else {
+            if(range.isSameSetAs(this.baseSet)){
+                return true;
+            }
         }
         return false;
     }
@@ -770,8 +782,10 @@ function BinaryRelation(baseSet, pairSet, secondSet){
         //The domain and codomain must have the same cardinality for it to be
         //possible that this is a bijection. (Though that is NOT a sufficient
         //condition! Just a necessary one)
-        if(this.baseSet.cardinality() != this.secondSet.cardinality()){
-            return false;
+        if(secondSet){
+            if(this.baseSet.cardinality() != this.secondSet.cardinality()){
+                return false;
+            }
         }
         //The following alone is sufficient, but the above is an optimization
         //to return false faster in the event that the cardinalities don't match
