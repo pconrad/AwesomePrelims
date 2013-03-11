@@ -1,0 +1,1 @@
+To use the moodleXMLFile, you need to install pyv8 through 'pip install pyv8', which also requires boost.
