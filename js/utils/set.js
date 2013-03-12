@@ -395,9 +395,60 @@ function Set(array, throwDupError, name) {
         return this.getRandomSubset(maxSize,minSize);
     }
 
+    /**
+     *  Union of two {@linkcode Set}s
+     *  @param {Set} otherSet The other Set to be used in the union
+     *  @returns {Set} A new Set containing the union
+     *  @throws Throws if otherSet is not a Set
+     */
+    this.union = function(otherSet){
+        if(typeof(otherSet) != "object" || !(otherSet instanceof Set)){
+            throw "otherSet is not of Set type";
+        }
+        var result = this.clone();
+        var other = otherSet.clone();
+        for ( var i = 0; i < other.cardinality(); i++){
+            //Add element automatically removes duplicates
+            result.addElement(other.elementAt(i));
+        }
+        return result;
+    }
+
+    /**
+     *  Intersect of two {@linkcode Set}s
+     *  @param {Set} otherSet The other Set to be used in the intersect
+     *  @returns {Set} A new Set containing the intersect
+     *  @throws Throws if otherSet is not a Set
+     */
+    this.intersect = function(otherSet){
+        if(typeof(otherSet) != "object" || !(otherSet instanceof Set)){
+            throw "otherSet is not of Set type";
+        }
+        var result = this.clone();
+        var other = otherSet.clone();
+        for ( var i = 0; i < result.cardinality(); i++){
+            if(!otherSet.hasElement(result.elementAt(i))){
+                result.removeElementAtIndex(i);
+                i--;
+            }
+        }
+        return result;
+    };
+
+    /**
+     *  Symmetric Difference of two {@linkcode Set}s
+     *  @param {Set} otherSet The other Set to be used in the symmetric difference
+     *  @returns {Set} A new Set containing the symmetric difference
+     *  @throws Throws if otherSet is not a Set
+     */
+    this.symmetricDifference = function(otherSet){
+        return (this.union(otherSet)).relativeComplement(this.intersect(otherSet));
+    };
+
     /** Generates a new Set containing the relative complement between this Set
      *  and the parameter. A relative complement contains all elements in this Set
-     *  but not contained in the parameter.
+     *  but not contained in the parameter. Technically, this is the relative complement
+     *  of B in A.
      *  @param {Set} otherSet The other Set to be used in the relative complement
      *  @returns {Set} A new Set containing the relative complement
      *  @throws Throws if otherSet is not a Set
@@ -406,10 +457,11 @@ function Set(array, throwDupError, name) {
         if(typeof(otherSet) != "object" || !(otherSet instanceof Set)){
             throw "otherSet is not of Set type";
         }
+        var temp = this.clone();
         var result = [];
-        for( var i = 0; i < this.cardinality(); i++){
-            if(! otherSet.hasElement(this.elementAt(i))){
-                result.push(this.elementAt(i));
+        for( var i = 0; i < temp.cardinality(); i++){
+            if(! otherSet.hasElement(temp.elementAt(i))){
+                result.push(temp.elementAt(i));
             }
         }
         return new Set(result);
