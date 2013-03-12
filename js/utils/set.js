@@ -197,13 +197,35 @@ function Set(array, throwDupError, name) {
     //TODO: A might be a terrible default
     this.name = name || "A";
 
-    //TODO: Make this scalable again
+    //TODO: Make this scalable again (i.e. you can provide width, height)
+    //This function will print an SVG string representation of the set. xBase
+    //and yBase are used to specify some x and y coordinates from which the
+    //SVG is relatively generated.
+    //In addition, it will create this.nodeCoordsAndRadius, which is a dictionary that
+    //can be used like this:
+    //  var xyz = new Set(["x","y","z"], false, "A");
+    //  xyz.nodeCoordsAndRadius["x"] //returns an array of the form [[x,y],r]
+                            //with the coordinates & radius of the node "x" in
+                            //this set's most recently generated SVG string
+    //The reason for this is so inside BinaryRelation's toSvg, we can generate
+    //the SVG for edges between the nodes of our sets (to do so, we clearly
+    //need each node's coordinates and radius in the SVG for each set)
     this.toSvg = function(xBase, yBase) {
         var xBase = xBase || 30;
         var yBase = yBase || 20;
+        var xPos, yPos;
+        var radius = (new Node).radius; //At least for now, we use the default
+                                        //radius for a Node SVG object
+        var nodeCoordsAndRadius = {};
         str = "<rect x='" + (xBase-27) + "' y='" + (yBase-10) + "' width='55' height='" + (this.elements.length*60+20*2) + "' fill='white' stroke-width='2' stroke='black' />"
-            str += "\n<text x='" + (xBase-6) + "' y='" + (yBase+5) + "' fill='black'>" + this.name + "</text>"
-            _.each(this.elements, function(element, i) { str += "\n" + (new Node(xBase,yBase+60*(i+1), element.toString())).toSvg(); });
+        str += "\n<text x='" + (xBase-6) + "' y='" + (yBase+5) + "' fill='black'>" + this.name + "</text>"
+        _.each(this.elements, function(element, i) {
+            xPos = xBase;
+            yPos = yBase+60*(i+1);
+            nodeCoordsAndRadius[element.toString()] = [[xPos,yPos], radius];
+            str += "\n" + (new Node(xPos,yPos, element.toString(), radius)).toSvg();
+        });
+        this.nodeCoordsAndRadius = nodeCoordsAndRadius;
         return str;
     }
 
@@ -666,6 +688,54 @@ function BinaryRelation(baseSet, pairSet, secondSet){
         }
     }
 
+    this.toSvg = function(xBase, yBase) {
+        var xBase = xBase || 30;
+        var yBase = yBase || 20;
+        var ARROW_WIDTH = 4; // declared constant
+
+        //The following sets up arrows that we use on our edges
+        var str = "<marker id='triangle' viewBox='0 0 10 10' refX='0' refY='5' markerUnits='strokeWidth' markerWidth='4' markerHeight='4' orient='auto'>\n"
+        str += "<path d='M 0 0 L 10 5 L 0 10 z' />\n</marker>\n"
+
+        var leftDict, rightDict;
+        if(!secondSet) {
+            //Draw baseSet twice (with space inbetween them)
+            str += baseSet.toSvg(xBase, yBase) + "\n";
+            leftDict = baseSet.nodeCoordsAndRadius;
+            str += baseSet.toSvg(xBase+200, yBase);
+            rightDict = baseSet.nodeCoordsAndRadius;
+        } else {
+            //Draw baseSet and secondSet (with space inbetween them)
+            str += baseSet.toSvg(xBase, yBase);
+            leftDict = baseSet.nodeCoordsAndRadius;
+            str += secondSet.toSvg(xBase+200, yBase);
+            rightDict = secondSet.nodeCoordsAndRadius;
+        }
+
+        //Now add the appropriate edges for this relation
+        var leftNodeCoordsAndRadius, rightNodeCoordsAndRadius;
+        _.each(this.pairSet.elements, function(edgeTuple) {
+            str += "\n<path marker-end='url(#triangle)' stroke-width='2' fill='none' stroke='black' d='M ";
+            //get the left node's coordinate and radius for this edge:
+            leftNodeCoordsAndRadius = leftDict[edgeTuple.elements[0].toString()];
+            //the left x-coordinate of our edge is (left node's x-coord) + (left node's radius) :
+            edgeLeftX = leftNodeCoordsAndRadius[0][0] + leftNodeCoordsAndRadius[1];
+            //the left y-coordinate of our edge is (left node's y-coord) :
+            edgeLeftY = leftNodeCoordsAndRadius[0][1];
+
+            //get the right node's coordinate and radius for this edge:
+            rightNodeCoordsAndRadius = rightDict[edgeTuple.elements[1].toString()];
+            //the right x-coordinate of our edge is (right node's x-coord) - (right node's radius) - ARROW_WIDTH :
+            edgeRightX = rightNodeCoordsAndRadius[0][0] - rightNodeCoordsAndRadius[1] - ARROW_WIDTH;
+            //the right y-coordinate of our edge is (right node's y-coord) :
+            edgeRightY = rightNodeCoordsAndRadius[0][1];
+
+            //finally, use these coordinates to draw the path
+            str += edgeLeftX + " " + edgeLeftY + " L " + edgeRightX + " " + edgeRightY + "' />";
+        });
+        return str + "\n";
+    }
+
     this.isLegalPair = function(pair) {
         return ( pair instanceof Tuple &&
                 pair.cardinality() == 2 &&
@@ -940,6 +1010,39 @@ function makeRandomRelation(sourceSet, mask){
             ((mask & 32) && (result.isTransitive()))
          ){
         result = new BinaryRelation(sourceSet,cartesianProduct.getRandomSubset());
+    }
+    return result;
+}
+
+//Makes a binary relation corresponding between domainSet and codomainSet,
+//optionally with a properties Bitmask
+//For the bitmask, add the following values together for the corresponding requirements
+//Function: 1
+//One-to-one: 2
+//Onto: 4
+//Not Function: 8
+//Not One-to-one: 16
+//Not Onto: 32
+//Note that 1 & 8, 2 & 16, 4 & 32, 8 & 2, and 8 & 4 are not allowed together, as they are exclusive.
+function makeRandomRelation2Sets(domainSet, codomainSet, mask){
+    var result = null;
+    var cartesianProduct = sourceSet.cartesianProduct(sourceSet);
+    if( (mask & 9) == 9 ||
+            (mask & 18) == 18 ||
+            (mask & 36) == 36 ||
+            (mask & 10) == 10 ||
+            (mask & 12) == 12){
+        throw "Invalid mask combination!";
+    }
+    while(!result || 
+            ((mask & 1) && !(result.isFunction())) ||
+            ((mask & 2) && !(result.isOneToOne())) ||
+            ((mask & 4) && !(result.isOnto()))||
+            ((mask & 8) && (result.isFunction()))  ||
+            ((mask & 16) && (result.isOneToOne())) ||
+            ((mask & 32) && (result.isOnto()))
+         ){
+        result = new BinaryRelation(domainSet,cartesianProduct.getRandomSubset(),codomainSet);
     }
     return result;
 }
