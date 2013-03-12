@@ -1,0 +1,181 @@
+<project default="compile">
+
+	<!-- build.xml for JavaMoodleXML -->
+
+	<property environment="env" />
+	<property name="mainClassGui" value="NONE" />
+	<property name="mainClass" value="edu.ucsb.cs56.pconrad.javamoodlexml.main.Sample" />
+	<property name="webRoot" value="${env.HOME}/public_html/cs56" />
+	<property name="webBaseURL" value="http://www.cs.ucsb.edu/~${env.USER}/cs56" />
+	<property name="projectPath" value="JavaMoodleXML" />
+	<property name="projectName" value="JavaMoodleXML" />
+	<property name="javadocDest" value="${webRoot}/${projectPath}/javadoc" />
+	<property name="javadocURL" value="${webBaseURL}/${projectPath}/javadoc" />
+	<property name="jwsDest" value="${webRoot}/${projectPath}/jws" />
+	<property name="jwsURL" value="${webBaseURL}/${projectPath}/jws" />
+	<!-- <property name="junitJarLoc" value="/cs/faculty/pconrad/public_html/cs56/lib/junit-4.8.2.jar" /> -->
+	<property name="junitJarLoc" value="lib/junit-4.8.2.jar" /> 
+
+
+     <path id="project.class.path"> 
+        <pathelement location="build"/>                                     
+        <pathelement location="${junitJarLoc}"/>    
+     </path>
+
+	<target name="compile" description="Compile all source files">
+		<mkdir dir="build" />
+		<javac srcdir="src" destdir="build" debug="true" debuglevel="lines,source" includeantruntime="false">
+
+                <classpath refid="project.class.path" />  
+
+
+		</javac>
+	</target>
+
+
+	<target name="run" depends="compile" description="Run ${mainClass}">
+		<java classname="${mainClass}" >
+                   <classpath refid="project.class.path" />  
+               </java>
+	</target>
+	
+	
+	<target name="runGui" depends="compile" description="Run ${mainClassGui} (with fork)">
+		<java classname="${mainClassGui}" fork="true" >
+                   <classpath refid="project.class.path" />  
+                </java>
+
+	</target>
+
+
+	<target name="clean" description="Delete non-source files">
+		<delete failonerror="false" verbose="true">
+			<fileset dir="build" includes="*.class"/>
+		</delete>
+		<delete dir="javadoc" quiet="true"/>
+		<delete dir="dist" quiet="true"/>
+		<delete dir="download" quiet="true"/>
+		<delete dir="temp" quiet="true"/>
+	</target>
+
+
+	<target name="javadoc" depends="compile" description="Generate and publish Javadocs">
+		<delete dir="javadoc" quiet="true" />
+		<javadoc destdir="javadoc" author="true" version="true" use="true">
+			<fileset dir="src" includes="**/*.java" />
+                <classpath refid="project.class.path" />  
+
+		</javadoc>
+
+		<!-- delete the old javadoc -->
+		<delete quiet="true" dir="${javadocDest}" />
+
+		<!-- copy everything javadoc destination, and then make it readable -->
+		<copy todir="${javadocDest}">
+			<fileset dir="javadoc" />
+		</copy>
+
+		<chmod dir="${javadocDest}" perm="755" type="dir" includes="**" />
+		<chmod dir="${javadocDest}" perm="755" type="file" includes="**/*" />
+		<echo>Javadoc deployed to ${javadocURL}</echo>
+	</target>
+
+	
+	<target name="jar" depends="compile" description="Bundle jarfiles">
+		<mkdir dir="dist" />
+		<jar destfile="dist/${projectName}.jar" basedir="build">
+			<manifest>
+				<attribute name="Main-Class" value="${mainClass}"/>
+			</manifest>
+		</jar>
+	</target>
+
+
+	<target name="test" depends="compile" description="Run the JUnit test suite">
+		<junit haltonerror="no" haltonfailure="no">
+                   <classpath refid="project.class.path" />  
+
+
+			<batchtest fork="yes">
+				<fileset dir="src">
+					<!-- this will pick up every class with a name ending in Test -->
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+
+			<formatter type="plain" usefile="false" />
+		</junit>
+	</target>
+
+	
+	<target name="download" description="Publish compressed source bundle">
+		<delete quiet="true">
+			<fileset dir="temp" includes="**/*"/>
+			<fileset dir="download" includes="**/*"/>
+		</delete>
+		
+		<mkdir dir="download"/>
+		<mkdir dir="temp"/>
+		<mkdir dir="temp/${projectPath}"/>
+		
+		<copy todir="temp/${projectPath}">
+			<fileset dir="." excludes="build/**, javadoc/**, **/*~, temp/**, dist/**, download/**"/>
+		</copy>
+		
+		<tar destfile="temp/${projectName}.tar" basedir="temp" includes="${projectPath}/**"/>
+		<gzip zipfile="download/${projectName}.tgz" src="temp/${projectName}.tar"/>
+		<zip destfile="download/${projectName}.zip" basedir="temp" includes="${projectPath}/**"/>
+		
+		<delete quiet="true">
+			<fileset dir="temp" includes="**/*"/>
+		</delete>
+	</target>
+
+
+	<target name="jws" depends="compile,jar" description="Copy jws files to the web">
+
+		<delete dir="${webRoot}/${projectPath}/jws" />
+		<mkdir dir="${webRoot}/${projectPath}/jws" />
+
+		<copy todir="${jwsDest}" file="dist/${projectName}.jar" />
+		<copy todir="${jwsDest}">
+			<fileset dir="jws" includes="*.html" />
+			<fileset dir="jws" includes="*.jnlp" />
+			<fileset dir="jws" includes="*.png" />
+			<fileset dir="jws" includes=".htaccess" />
+		</copy>
+		<echo>Java web start at "${jwsURL}"</echo>
+	</target>
+
+	
+	
+	<target name="publish" depends="jar,javadoc,download, jws" description="Publish jar/jws files to the web">
+		<mkdir dir="${webRoot}/${projectPath}" />
+
+		<delete dir="${webRoot}/${projectPath}/browse" />
+		<mkdir dir="${webRoot}/${projectPath}/browse" />
+
+		<delete dir="${webRoot}/${projectPath}/download" />
+		<mkdir dir="${webRoot}/${projectPath}/download" />
+
+		<copy file="html/index.html" todir="${webRoot}/${projectPath}" />		
+		<copy file="numberedsource.txt" todir="${webRoot}/${projectPath}/browse" />
+
+		<copy todir="${webRoot}/${projectPath}/download">
+			<fileset dir="download" />
+			<fileset dir="dist" />
+		</copy>
+
+		<copy file="build.xml" todir="${webRoot}/${projectPath}/browse" />
+
+		<copy todir="${webRoot}/${projectPath}/browse/src">
+			<fileset dir="src" />
+		</copy>
+
+		<chmod dir="${webRoot}/${projectPath}" perm="755" type="both" includes="**/*" />
+
+		<echo>Project published to ${webBaseURL}/${projectPath}</echo>
+	</target>
+  
+
+</project>

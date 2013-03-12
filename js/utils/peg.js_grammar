@@ -1,0 +1,44 @@
+/* 
+   Discrete Math PEG (Parsing Expression Grammar)
+
+   This is designed to be used with PEG.js (http://pegjs.majda.cz/) and our
+   Awesome library to generate a parser for discrete math JavaScript objects.
+
+   Note: set.js and tuple.js should be read in before the generated parser.js
+   file, because the parser creates Set and Tuple objects.
+*/
+
+Start
+  = e:Elt				{ return e; }
+
+Set
+  = '{' e:Elements '}'			{ return new Set(e, true); }
+
+Elements
+  = el:ElementList			{ return el; }
+  / T_space*	/* empty list */	{ return []; }
+
+ElementList
+  = e:Elt ',' el:ElementList		{ el.unshift(e); return el; }
+  / e:Elt				{ out = []; out.push(e); return out; }
+
+Elt
+  = T_space* e:Element T_space*		{ return e; }
+
+Element
+  = s:Set				{ return s; }
+  / t:Tuple				{ return t; }
+  / i:T_integer				{ return i; }
+  / s:T_string				{ return s; }
+
+Tuple
+  = '(' e:Elements ')'			{ return new Tuple(e); }
+
+T_integer "integer"
+  = digits:[0-9]+			{ return parseInt(digits.join(""),10); }
+
+T_string "string"
+  = chars:[a-z]i+			{ return chars.join(""); }
+
+T_space "whitespace"
+  = [' '\t\r\n] 			/* ignored */

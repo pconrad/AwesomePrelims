@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+
+
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/Default for CMPSC 196 (200) -  UNDERGRAD RESEARCH - Winter 2013</text>
+
+    </category>
+  </question>
+
+
+
+<!-- question: 126485  -->
+  <question type="multichoice">
+    <name><text>Example Question Name</text>
+</name>
+    <questiontext format="moodle_auto_format">
+<text><![CDATA[<div>This is the question text, with <strong>bold</strong> and <em>italics</em>. &nbsp; This is a quesiton with only one correct answer.</div>
+<div>&nbsp;</div>
+<div>There is also a bullet list with:</div>
+<div>
+<ul>
+<li>these</li>
+<li>three</li>
+<li>items.</li>
+</ul>
+<div>&nbsp;</div>
+</div>]]></text>
+    </questiontext>
+    <image></image>
+    <generalfeedback>
+<text><![CDATA[<div>This is general feedback.</div>]]></text>
+    </generalfeedback>
+    <defaultgrade>1</defaultgrade>
+    <penalty>0.1</penalty>
+    <hidden>0</hidden>
+    <shuffleanswers>1</shuffleanswers>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <correctfeedback>      <text><![CDATA[<div>Feedback for any correct response</div>]]></text>
+</correctfeedback>
+    <partiallycorrectfeedback>      <text></text>
+</partiallycorrectfeedback>
+    <incorrectfeedback>      <text><![CDATA[<div>Feedback for any incorrect response.</div>]]></text>
+</incorrectfeedback>
+    <answernumbering>abc</answernumbering>
+      <answer fraction="100">
+        <text>
+This is choice a (the correct one, 100%)
+        </text>
+      <feedback>
+          <text>
+<![CDATA[<div>Feedback for choice a</div>]]>
+          </text>
+      </feedback>
+    </answer>
+      <answer fraction="0">
+        <text>
+This is choice b
+        </text>
+      <feedback>
+          <text>
+<![CDATA[<div>Feedback for choice b, which is an incorrect answer</div>]]>
+          </text>
+      </feedback>
+    </answer>
+      <answer fraction="0">
+        <text>
+This is choice c
+        </text>
+      <feedback>
+          <text>
+<![CDATA[<div>Feedback for choice c, which is incorrect</div>]]>
+          </text>
+      </feedback>
+    </answer>
+      <answer fraction="0">
+        <text>
+This is choice d
+        </text>
+      <feedback>
+          <text>
+<![CDATA[<div>Feedback for choice d, which is incorrect.</div>]]>
+          </text>
+      </feedback>
+    </answer>
+      <answer fraction="0">
+        <text>
+This is choice e
+        </text>
+      <feedback>
+          <text>
+<![CDATA[<div>This is choice e, which is incorrect.</div>]]>
+          </text>
+      </feedback>
+    </answer>
+</question>
+
+
+
+<!-- question: 126399  -->
+  <question type="multichoice">
+    <name><text>foo</text>
+</name>
+    <questiontext format="html">
+<text><![CDATA[<p>This is a question</p>]]></text>
+    </questiontext>
+    <image></image>
+    <generalfeedback>
+<text></text>
+    </generalfeedback>
+    <defaultgrade>1</defaultgrade>
+    <penalty>0.1</penalty>
+    <hidden>0</hidden>
+    <shuffleanswers>1</shuffleanswers>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <correctfeedback>      <text></text>
+</correctfeedback>
+    <partiallycorrectfeedback>      <text></text>
+</partiallycorrectfeedback>
+    <incorrectfeedback>      <text></text>
+</incorrectfeedback>
+    <answernumbering>abc</answernumbering>
+      <answer fraction="100">
+        <text>
+foo
+        </text>
+      <feedback>
+          <text>
+
+          </text>
+      </feedback>
+    </answer>
+      <answer fraction="0">
+        <text>
+bar
+        </text>
+      <feedback>
+          <text>
+
+          </text>
+      </feedback>
+    </answer>
+      <answer fraction="0">
+        <text>
+fum
+        </text>
+      <feedback>
+          <text>
+
+          </text>
+      </feedback>
+    </answer>
+</question>
+
+
+
+<!-- question: 126400  -->
+  <question type="multichoice">
+    <name><text>foo</text>
+</name>
+    <questiontext format="html">
+<text><![CDATA[<p>This is a question</p><svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <circle cx="50" cy="50" r="4" stroke="black" stroke-width="1" fill="green" />
+ <circle cx="100" cy="50" r="4" stroke="black" stroke-width="1" fill="red" />
+ <circle cx="50" cy="100" r="4" stroke="black" stroke-width="1" fill="blue" />
+ <circle cx="100" cy="100" r="4" stroke="black" stroke-width="1" fill="yellow" />
+ <circle cx="100" cy="150" r="4" stroke="black" stroke-width="1" fill="black" />
+ 
+ </svg>]]></text>
+    </questiontext>
+    <image></image>
+    <generalfeedback>
+<text></text>
+    </generalfeedback>
+    <defaultgrade>1</defaultgrade>
+    <penalty>0.1</penalty>
+    <hidden>0</hidden>
+    <shuffleanswers>1</shuffleanswers>
+    <single>true</single>
+    <shuffleanswers>true</shuffleanswers>
+    <correctfeedback>      <text></text>
+</correctfeedback>
+    <partiallycorrectfeedback>      <text></text>
+</partiallycorrectfeedback>
+    <incorrectfeedback>      <text></text>
+</incorrectfeedback>
+    <answernumbering>abc</answernumbering>
+      <answer fraction="100">
+        <text>
+foo
+        </text>
+      <feedback>
+          <text>
+
+          </text>
+      </feedback>
+    </answer>
+      <answer fraction="0">
+        <text>
+bar
+        </text>
+      <feedback>
+          <text>
+
+          </text>
+      </feedback>
+    </answer>
+      <answer fraction="0">
+        <text>
+fum
+        </text>
+      <feedback>
+          <text>
+
+          </text>
+      </feedback>
+    </answer>
+</question>
+
+
+</quiz>
