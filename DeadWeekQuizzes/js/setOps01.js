@@ -26,7 +26,7 @@ function generateQuiz(num, numQuestions, numChoices) {
     var questions = "<h3>Questions</h3>";
     var answers = "<h3>Answer Key</h3>";
 
-    exercises = generateSetOpQuestions(numQuestions);
+    exercises = generateSetOperationsQuestions(numQuestions,5);
 
     for (var i=0; i<exercises.length; i++ ) {
 	
