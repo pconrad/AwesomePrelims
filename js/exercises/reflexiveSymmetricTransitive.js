@@ -15,12 +15,16 @@ function generateReflexiveSymmetricTransitiveQuestions(count, setName){
             arr.push(temp);
         }
     }
-    var questionBase = "Let " + sourceSet.name + " be "+sourceSet.format()+", and thus, " + sourceSet.name + "x" + sourceSet.name + " is " ;
+    var questionBase = "Let " + sourceSet.name + " be "+sourceSet.format()+". ";
     var questionEnd = ". Which of the following statements about R is true?";
     for(var i = 0; i < arr.length; i++){
         temp = arr[i];
-        arr[i] = new MultipleChoiceQuestion(
-            questionBase+temp.cartesianProduct.toString() + ".  Let the relation R be " + temp.toString()+questionEnd,getCorrectStatement(temp),getIncorrectStatements(temp));
+        arr[i] = 
+	    new MultipleChoiceQuestion( (questionBase 
+					 + "Let the relation R be " 
+					 + temp.toString() + questionEnd), 
+					getCorrectStatement(temp),
+					getIncorrectStatements(temp));
     }
     return arr;
 }
