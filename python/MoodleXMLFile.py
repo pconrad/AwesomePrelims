@@ -1,7 +1,6 @@
 __author__ = 'johanhenkens'
-import sys, argparse
+import sys, argparse, re, PyV8
 from xml.dom.minidom import *
-import PyV8
 
 class XMLNode(object):
     def __init__(self,nodetype,attrDict={},children=[],value='',cdata=False):
@@ -369,6 +368,8 @@ if __name__ == '__main__':
 
     #fout = open('tmp.xml','wb')
     a = d1.toprettyxml(indent='    ',encoding='utf-8')
-    args.filename.write(a)
+    text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)    
+    prettyXml = text_re.sub('>\g<1></', a)
+    args.filename.write(prettyXml)
 
 

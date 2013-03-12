@@ -273,7 +273,7 @@ function Set(array, throwDupError, name) {
     /** Same as {@linkcode Set#format}
      *
      */
-    this.toString = this.laTeXformat;
+    this.toString = this.format;
 
     /** Performs the cartesian product of this set with another set (e.g., A.cartesianProduct(B) = A x B).
      *  The return is a Set of {@linkcode Tuple} objects of cardinality this.cardinality() * otherset.cardinality().
@@ -532,7 +532,7 @@ function Tuple(array) {
      *  @see Tuple#format
      *  @returns {string} The string representation of the Tuple
      */
-    this.toString = this.laTeXformat;
+    this.toString = this.format;
 
     /** Checks to see if the two Tuples are equal
      *  @param {Tuple} otherTuple The Tuple to be compared against
