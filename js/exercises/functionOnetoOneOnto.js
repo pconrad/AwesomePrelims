@@ -81,7 +81,20 @@ function generateFunctionOnetoOneOntoQuestions(count, setName1, setName2){
             arr.push(temp);
         }
     }
-    var questionBase = "Let the relation R be the relation represented by this graph:";
+
+    // TODO: Need to figure out a way to make this robust across
+    // HTML and LaTeX representations---i.e. to call a function
+    // that returns various symbols---or a function that can map from
+    // a set of symbols in HTML to LaTeX or vice versa.  For now,
+    // HTML is hard-coded, since that works for both plain HTML and
+    // MoodleXML versions.
+
+    var subsetSymbol="&sube;";
+    var crossProductSymbol="&times;"
+    var questionBase = "Let the relation R"
+	+ subsetSymbol 
+	+ "(" + setLabel1 + crossProductSymbol + setLabel2
+	+ ") be the relation represented by this graph:";
     var questionEnd = "Which of the following statements about R is true?";
     var innerSvg;
     for(var i = 0; i < arr.length; i++){
@@ -91,38 +104,42 @@ function generateFunctionOnetoOneOntoQuestions(count, setName1, setName2){
         //is what sets temp.svgWidth and temp.svgHeight, so it MUST be called
         //before those are used.
         arr[i] = 
-	       new MultipleChoiceQuestion( (questionBase
-				+ '<br><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="'
-                + temp.svgWidth + '" height="' + temp.svgHeight + '">'
-                + innerSvg + "</svg><br>" + questionEnd),
-				getCorrectStatement(temp),
-				getIncorrectStatements(temp) );
+	       new MultipleChoiceQuestion
+	    ( (questionBase
+	       + '<br><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="'
+	       + temp.svgWidth + '" height="' + temp.svgHeight + '">'
+	       + innerSvg + "</svg><br>" + questionEnd),
+	      getCorrectStatement(temp,setLabel1,setLabel2),
+	      getIncorrectStatements(temp,setLabel1,setLabel2) );
     }
     return arr;
 }
 
-function getCorrectStatement(relation){
+function getCorrectStatement(relation,setLabel1,setLabel2){
     if(!relation.isFunction()){
-        return getStatement(false);
+        return getStatement(false,setLabel1,setLabel2);
     }
     //else:
-    return getStatement(true,relation.isOneToOne(),relation.isOnto());
+    return getStatement(true,relation.isOneToOne(),relation.isOnto(),
+			setLabel1,setLabel2);
 }
 
-function getStatement(funct,onetoone,onto){
+function getStatement(funct,onetoone,onto,setLabel1,setLabel2){
     var result =  "R is ";
+    var mapsToSymbol = "&rarr;"; // TODO: make robust for LaTeX version
+    var AtoB = "A" + mapsToSymbol + "B";
     if(funct){
-        result += "a function, is";
+        result += "a function " + AtoB + ", is";
         result += ((onetoone)?"":" not")+" one-to-one, and is";
         result += ((onto)?"":" not")+" onto.";
     }
     else {
-        result += "not a function. (Thus, it can't be one-to-one or onto).";
+        result += "not a function " + AtoB + ". (Thus, it can't be one-to-one or onto).";
     }
     return result;
 }
 
-function getIncorrectStatements(relation){
+function getIncorrectStatements(relation,setLabel1,setLabel2){
     var result =  [
         getStatement(false),
         getStatement(true, false, false),
