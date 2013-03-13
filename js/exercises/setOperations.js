@@ -60,9 +60,9 @@ function generateSetOperationsQuestions(count, numChoices) {
     var arr = [];
 
     while(arr.length < count) {
-        var sets = randFromArray(sets,2);
-        var set1 = sets[0];
-        var set2 = sets[1];
+        var twoSets = randFromArray(sets,2);
+        var set1 = twoSets[0];
+        var set2 = twoSets[1];
         var op = _.random(0,2);
 
         var result = null;
