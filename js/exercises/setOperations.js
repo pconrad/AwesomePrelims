@@ -1,6 +1,8 @@
 function generateSetOperationsQuestions(count, numChoices) {
-
     // TODO: Make sure numChoices is at least 2.
+    // TODO: Right now there are only 30 possible questions! (although a lot more possible answers)
+    // This could be fixed by regenerating two random subsets from the universe for each problem, rather than for the whole set of problems
+
 
     // generate five random subsets of a through h.
 
@@ -83,29 +85,58 @@ function generateSetOperationsQuestions(count, numChoices) {
                 break;
         }
         questionText = questionText + " " + set2.name + ".";
+        result.sort();
 
         var wrongAnswers = [];
+        var diffFromUniverse = universe.relativeComplement(result);
+        if ( result.cardinality() > 0 && diffFromUniverse.cardinality() > 0 ){
+            var tempSet = result.clone();
+            tempSet.removeElementAtIndex(_.random(tempSet.cardinality()-1));
+            tempSet.addElement(diffFromUniverse.elementAt(_.random(diffFromUniverse.cardinality()-1)));
+            if(!tempSet.isSameSetAs(result)){
+                wrongAnswers.push(tempSet);
+            }
+        }
 
         /*
-        for ( var i = 0; i < 4 && wrongAnswers.length < numChoices-1  ; i++){
-
-        }*/
-        while ( wrongAnswers.length < numChoices - 1 ){
+         *  Make some predetermined distractors, and see if we can add them
+         */
+        var tempDistractors = [set1.union(set2),set1.intersect(set2),set1.relativeComplement(set2),set2.relativeComplement(set1),set1.symmetricDifference(set2)];
+        tempDistractors.sort(function () { return 0.5 - Math.random();});
+        for ( var i = 0; i < tempDistractors.length && wrongAnswers.length < numChoices - 2 ; i++){
+            var found = false;
             var tempSet = universe.getRandomSubset();
             for ( var i = 0; i < wrongAnswers.length; i++){
                 if ( wrongAnswers[i].isSameSetAs(tempSet) ){
-                    tempSet = null;
-                    break
+                    found = true;
+                    break;
                 }
             }
-            if (tempSet!=null && !result.isSameSetAs(tempSet)){
+            if (!found && !result.isSameSetAs(tempSet)){
+                wrongAnswers.push(tempSet);
+            }
+        }
+
+        /*
+         *  Fill in the rest of the wrongAnswers with random sets.
+         */
+        while ( wrongAnswers.length < numChoices - 1 ){
+            var found = false;
+            var tempSet = universe.getRandomSubset();
+            for ( var i = 0; i < wrongAnswers.length; i++){
+                if ( wrongAnswers[i].isSameSetAs(tempSet) ){
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && !result.isSameSetAs(tempSet)){
                 wrongAnswers.push(tempSet);
             }
         }
         arr.push(new MultipleChoiceQuestion
             (questionText,
             result.toString(),
-            _.map(wrongAnswers,function(set){ return set.toString() ;})));
+            _.map(wrongAnswers,function(set){ set.sort(); return set.toString() ;})));
 
     }
     return arr;
