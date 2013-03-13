@@ -3,6 +3,12 @@
 
 
 function generateQuizzes(howMany, numSetQuestions, numFunctionQuestions, numChoices) {
+
+    // TODO: replace with JQuery equivalent
+
+    window.document.getElementById("quizzes").innerHTML = "";
+    window.document.getElementById("answers").innerHTML = "";
+
     for (var i=1; i<=howMany; i++) {
 	generateQuiz(i, numSetQuestions, numFunctionQuestions, numChoices);
     }
@@ -12,8 +18,14 @@ function generateQuiz(num, numSetQuestions, numFunctionQuestions, numChoices) {
 
 
 
-    var header = "<h2 style='page-break-before:always'>CS40-W13-IC15, version " + num + ", page 1 (Sets)</h2>"
-	+ "<p style='margin-top:3em;'>CS40 W13 IC15.  Name: ___________________________________</p>";
+    var questionsHeader = "<h2 " + 
+	(num>1 ? "style='page-break-before:always'" : "")
+	+ ">CS40-W13-IC15, version " + num + ", page 1 (Sets)</h2>"
+	+ "<p style='margin-top:3em;'>CS40 W13 IC15, (10 pts)  Name: ___________________________________</p>";
+
+    var answerKeyHeader = "<h2 style='page-break-before:always'>"
+	+ "CS40-W13-IC15, version " + num + ", Answer Key</h2>";
+
     var page2header = "<h2 style='page-break-before:always'>CS40-W13-IC15, version " + num + ", page 2 (Functions)</h2>"
 	+ "<p style='margin-top:3em;'>Name: ___________________________________</p>";
     var questions = "<h3>Questions</h3>";
@@ -29,7 +41,7 @@ function generateQuiz(num, numSetQuestions, numFunctionQuestions, numChoices) {
 	
 	questions += "<p style='margin-top:2em;clear:both;'> (" 
 	    + (i+1) 
-	    + ") " 
+	    + ") (5 pts) " 
 	    + setExercises[i].questionText + "</p>";
 	
 	
@@ -58,8 +70,10 @@ function generateQuiz(num, numSetQuestions, numFunctionQuestions, numChoices) {
     } // for loop over all setExercises
 
 
-    window.document.getElementById("quizzes").innerHTML += header+questions; 
-    window.document.getElementById("answers").innerHTML += header+answers; 
+    window.document.getElementById("quizzes").innerHTML += 
+	questionsHeader+questions; 
+    window.document.getElementById("answers").innerHTML += 
+	answerKeyHeader+answers; 
     
     questions = answers = "";
 
@@ -69,7 +83,7 @@ function generateQuiz(num, numSetQuestions, numFunctionQuestions, numChoices) {
 	
 	questions += "<p style='margin-top:2em;clear:both;'> (" 
 	    + (i+1+setExercises.length) 
-	    + ") " 
+	    + ") (5 pts) " 
 	    + functionExercises[i].questionText + "</p>";
 	
 	
@@ -99,6 +113,6 @@ function generateQuiz(num, numSetQuestions, numFunctionQuestions, numChoices) {
 
 
     window.document.getElementById("quizzes").innerHTML += page2header+questions; 
-    window.document.getElementById("answers").innerHTML += page2header+answers; 
+    window.document.getElementById("answers").innerHTML += answers; 
 
 }
