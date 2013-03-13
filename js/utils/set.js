@@ -78,13 +78,13 @@ function isEquivalentTo(x,y) {
  *  @throws Throws if count is not within bounds of the array
  */
 function randFromArray(arr, count) {
-    if(count < 0 || count > arr.length){
-        throw "count is out of bounds in randFromArray"
-    }
-    arr = arr.slice(0);
     if (count == null){
-        return arr[_.random(arr.length)];
+        return arr[_.random(arr.length-1)];
     } else{
+        if(count < 0 || count > arr.length){
+            throw "count is out of bounds in randFromArray"
+        }
+        arr = arr.slice(0);
         return _.map(arr.slice(0,count),function(){
                 return arr.splice(_.random(0,arr.length-1),1)[0];
                 });
@@ -702,7 +702,7 @@ function BinaryRelation(baseSet, pairSet, secondSet){
             //Draw baseSet twice (with space inbetween them)
             str += baseSet.toSvg(xBase, yBase) + "\n";
             leftDict = baseSet.nodeCoordsAndRadius;
-            str += baseSet.toSvg(xBase+200, yBase);
+            str += baseSet.toSvg(xBase+200, yBase); //200 is currently hard-coded to be the space between sets
             rightDict = baseSet.nodeCoordsAndRadius;
         } else {
             //Draw baseSet and secondSet (with space inbetween them)
@@ -733,6 +733,18 @@ function BinaryRelation(baseSet, pairSet, secondSet){
             //finally, use these coordinates to draw the path
             str += edgeLeftX + " " + edgeLeftY + " L " + edgeRightX + " " + edgeRightY + "' />";
         });
+
+        //As a final step, set this.svgHeight and this.svgWidth
+        this.svgWidth = 280; //currently hardcoded, just like the space between sets (200)
+        var maxNodes;
+        if(secondSet){
+            maxNodes = _.max([baseSet.cardinality(), secondSet.cardinality()])
+        } else {
+            maxNodes = baseSet.cardinality();
+        }
+        //60 per node, plus 60 for the space above the first node
+        this.svgHeight = (maxNodes+1)*60;
+
         return str + "\n";
     }
 
@@ -972,7 +984,7 @@ function BinaryRelation(baseSet, pairSet, secondSet){
             return this.baseSet.isSameSetAs(otherRelation.baseSet) && this.pairSet.isSameSetAs(otherRelation.pairSet);
         }
         else {
-            if(!otherSet.secondSet) {
+            if(!otherRelation.secondSet) {
                 return false;
             }
             return this.baseSet.isSameSetAs(otherRelation.baseSet) && this.secondSet.isSameSetAs(otherRelation.secondSet) && this.pairSet.isSameSetAs(otherRelation.pairSet);
@@ -1026,12 +1038,8 @@ function makeRandomRelation(sourceSet, mask){
 //Note that 1 & 8, 2 & 16, 4 & 32, 8 & 2, and 8 & 4 are not allowed together, as they are exclusive.
 function makeRandomRelation2Sets(domainSet, codomainSet, mask){
     var result = null;
-    var cartesianProduct = sourceSet.cartesianProduct(sourceSet);
-    if( (mask & 9) == 9 ||
-            (mask & 18) == 18 ||
-            (mask & 36) == 36 ||
-            (mask & 10) == 10 ||
-            (mask & 12) == 12){
+    var cartesianProduct = domainSet.cartesianProduct(codomainSet);
+    if( mask != 8 && mask != 49 && mask != 21 && mask != 35 && mask != 7) {
         throw "Invalid mask combination!";
     }
     while(!result || 
