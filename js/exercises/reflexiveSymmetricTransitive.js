@@ -19,12 +19,12 @@ function generateReflexiveSymmetricTransitiveQuestions(count, setName){
     var questionEnd = ". Which of the following statements about R is true?";
     for(var i = 0; i < arr.length; i++){
         temp = arr[i];
-        arr[i] = 
-	    new MultipleChoiceQuestion( (questionBase 
-					 + "Let the relation R be " 
-					 + temp.toString() + questionEnd), 
-					getCorrectStatement(temp),
-					getIncorrectStatements(temp));
+        arr[i] =
+        new MultipleChoiceQuestion( (questionBase
+                     + "Let the relation R be "
+                     + temp.toString() + questionEnd),
+                    getCorrectStatement(temp),
+                    getIncorrectStatements(temp));
     }
     return arr;
 }
