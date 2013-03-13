@@ -210,13 +210,17 @@ function Set(array, throwDupError, name) {
     //The reason for this is so inside BinaryRelation's toSvg, we can generate
     //the SVG for edges between the nodes of our sets (to do so, we clearly
     //need each node's coordinates and radius in the SVG for each set)
+
     this.toSvg = function(xBase, yBase) {
+
+
         var xBase = xBase || 30;
         var yBase = yBase || 20;
         var xPos, yPos;
         var radius = (new Node).radius; //At least for now, we use the default
                                         //radius for a Node SVG object
         var nodeCoordsAndRadius = {};
+
         str = "<rect x='" + (xBase-27) + "' y='" + (yBase-10) + "' width='55' height='" + (this.elements.length*60+20*2) + "' fill='white' stroke-width='2' stroke='black' />"
         str += "\n<text x='" + (xBase-6) + "' y='" + (yBase+5) + "' fill='black'>" + this.name + "</text>"
         _.each(this.elements, function(element, i) {
@@ -228,6 +232,12 @@ function Set(array, throwDupError, name) {
         this.nodeCoordsAndRadius = nodeCoordsAndRadius;
         return str;
     }
+
+    this.getLabel = function() {
+	return this.name;
+    }
+
+
 
     // Performs a deep clone. Thus, it recursively searches for Tuples or Sets and calls clone on them.
     /** Performs a deep clone on the Set, recursively calling clone on any {@linkcode Set}
@@ -762,12 +772,17 @@ function BinaryRelation(baseSet, pairSet, secondSet){
             leftDict = baseSet.nodeCoordsAndRadius;
             str += baseSet.toSvg(xBase+200, yBase); //200 is currently hard-coded to be the space between sets
             rightDict = baseSet.nodeCoordsAndRadius;
+	    this.baseSetLabel = baseSet.getLabel();
+	    this.secondSetLabel = baseSet.getLabel();
         } else {
             //Draw baseSet and secondSet (with space inbetween them)
             str += baseSet.toSvg(xBase, yBase);
             leftDict = baseSet.nodeCoordsAndRadius;
             str += secondSet.toSvg(xBase+200, yBase);
             rightDict = secondSet.nodeCoordsAndRadius;
+	    this.baseSetLabel = baseSet.getLabel();
+	    this.secondSetLabel = secondSet.getLabel();
+
         }
 
         //Now add the appropriate edges for this relation
@@ -802,6 +817,7 @@ function BinaryRelation(baseSet, pairSet, secondSet){
         }
         //60 per node, plus 60 for the space above the first node
         this.svgHeight = (maxNodes+1)*60;
+
 
         return str + "\n";
     }

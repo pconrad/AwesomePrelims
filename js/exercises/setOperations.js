@@ -73,15 +73,15 @@ function generateSetOperationsQuestions(count, numChoices) {
         switch(op){
             case 0:
                 result = set1.union(set2);
-                questionText=questionText + "&cup;";
+                questionText=questionText + "&cup;"; // TODO Make LaTeX robust
                 break;
             case 1:
                 result = set1.intersect(set2);
-                questionText=questionText + "&cap;";
+                questionText=questionText + "&cap;";// TODO Make LaTeX robust
                 break;
             case 2:
                 result = set1.relativeComplement(set2);
-                questionText=questionText + "&#8726;";
+                questionText=questionText + "-";
                 break;
         }
         questionText = questionText + " " + set2.name + ".";

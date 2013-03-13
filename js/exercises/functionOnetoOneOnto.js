@@ -1,4 +1,4 @@
-function generateFunctionOnetoOneOntoQuestions(count, setName1, setName2){
+function generateFunctionOnetoOneOntoQuestions(count, setName1, setName2, floatSVGRight){
     var arr = [];
     var setLabel1 = setName1 || "A";
     var setLabel2 = setName2 || "B";
@@ -82,6 +82,7 @@ function generateFunctionOnetoOneOntoQuestions(count, setName1, setName2){
         }
     }
 
+
     // TODO: Need to figure out a way to make this robust across
     // HTML and LaTeX representations---i.e. to call a function
     // that returns various symbols---or a function that can map from
@@ -91,33 +92,51 @@ function generateFunctionOnetoOneOntoQuestions(count, setName1, setName2){
 
     var subsetSymbol="&sube;";
     var crossProductSymbol="&times;"
-    var questionBase = "Let the relation R"
-	+ subsetSymbol 
-	+ "(" + setLabel1 + crossProductSymbol + setLabel2
-	+ ") be the relation represented by this graph:";
     var questionEnd = "Which of the following statements about R is true?";
     var innerSvg;
     for(var i = 0; i < arr.length; i++){
         temp = arr[i];
+
+
         innerSvg = temp.toSvg(); //This variable may look useless (i.e. why not
         //just call temp.toSvg() below in place of innerSvg?) However, toSvg()
         //is what sets temp.svgWidth and temp.svgHeight, so it MUST be called
         //before those are used.
+	//  TODO: ACK! See comment above! Fix that!   Side effects are evil.
+
+	// window.alert("temp.baseSetLabel=" + temp.baseSetLabel+ " "
+	//	     +"temp.secondSetLabel" + temp.secondSetLabel);
+
+	// window.alert(innerSvg);
+
+	var questionBase = "Let the relation R"
+	    + subsetSymbol 
+	    + "(" + temp.baseSetLabel + crossProductSymbol + temp.secondSetLabel 
+	    + ") be the relation represented by this graph:";
+
+
         arr[i] = 
 	       new MultipleChoiceQuestion
 	    ( (questionBase
-	       + '<br><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="'
+	       + '<br>' 
+
+	       + (floatSVGRight ? 
+		  "<div style='float:right; width=" + (temp.svgWidth+5) + "'>"
+		  : "")
+	       + '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="'
 	       + temp.svgWidth + '" height="' + temp.svgHeight + '">'
-	       + innerSvg + "</svg><br>" + questionEnd),
-	      getCorrectStatement(temp,setLabel1,setLabel2),
-	      getIncorrectStatements(temp,setLabel1,setLabel2) );
+	       + innerSvg + "</svg>"
+	       + (floatSVGRight ? "</div>" : "")
+	       + "<br>" + questionEnd),
+	      getCorrectStatement(temp,temp.baseSetLabel,temp.secondSetLabel),
+	      getIncorrectStatements(temp,temp.baseSetLabel,temp.secondSetLabel) );
     }
     return arr;
 }
 
 function getCorrectStatement(relation,setLabel1,setLabel2){
     if(!relation.isFunction()){
-        return getStatement(false,setLabel1,setLabel2);
+        return getStatement(false,false,false,setLabel1,setLabel2);
     }
     //else:
     return getStatement(true,relation.isOneToOne(),relation.isOnto(),
@@ -127,7 +146,7 @@ function getCorrectStatement(relation,setLabel1,setLabel2){
 function getStatement(funct,onetoone,onto,setLabel1,setLabel2){
     var result =  "R is ";
     var mapsToSymbol = "&rarr;"; // TODO: make robust for LaTeX version
-    var AtoB = "A" + mapsToSymbol + "B";
+    var AtoB = setLabel1 + mapsToSymbol + setLabel2;
     if(funct){
         result += "a function " + AtoB + ", is";
         result += ((onetoone)?"":" not")+" one-to-one, and is";
@@ -141,11 +160,11 @@ function getStatement(funct,onetoone,onto,setLabel1,setLabel2){
 
 function getIncorrectStatements(relation,setLabel1,setLabel2){
     var result =  [
-        getStatement(false),
-        getStatement(true, false, false),
-        getStatement(true, false, true),
-        getStatement(true, true, false),
-        getStatement(true, true, true)];
+		   getStatement(false, false, false, setLabel1, setLabel2),
+		   getStatement(true, false, false, setLabel1, setLabel2),
+		   getStatement(true, false, true, setLabel1, setLabel2),
+		   getStatement(true, true, false, setLabel1, setLabel2),
+		   getStatement(true, true, true, setLabel1, setLabel2)];
     result.splice(result.indexOf(getCorrectStatement(relation)),1);
     return result;
 }
