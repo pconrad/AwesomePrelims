@@ -5,8 +5,8 @@ function generateSetOperationsQuestions(count, numChoices) {
     // generate five random subsets of a through h.
 
     var universe = new Set(["a","b","c","d","e","f","g","h"],
-			   false,
-			   "U");
+               false,
+               "U");
 
     var sets = [];
 
@@ -22,7 +22,8 @@ function generateSetOperationsQuestions(count, numChoices) {
     var names=["V","W","X","Y","Z"];
 
     for (var i=0; i<sets.length; i++) {
-	sets[i].name = names[i];
+        sets[i].sort();
+        sets[i].name = names[i];
     }
 
     // Now we have five random subsets of a through h to play with.
@@ -53,18 +54,59 @@ function generateSetOperationsQuestions(count, numChoices) {
     //  The size of the arrayOfIncorrectAnswerTexts should be equal to
     //  numChoices - 1 (numChoices was passed in as a parameter.)
 
-    var fakeWrongAnswers = [];
 
-    for (var i=1; i<numChoices; i++) { // we want numChoices-1 items
-	fakeWrongAnswers.push("This is fake wrong answer number " + i);
-    }
+    var arr = [];
 
-    arr = [];
-    for (var i=1; i<=count; i++) {
-	arr.push(new MultipleChoiceQuestion
-		   ("This is fake question number " + i,
-		    "This is a fake right answer",
-		    fakeWrongAnswers));
+    while(arr.length < count) {
+        var sets = randFromArray(sets,2);
+        var set1 = sets[0];
+        var set2 = sets[1];
+        var op = _.random(0,2);
+
+        var result = null;
+        var wrongAnswers = [];
+
+        var questionText = "Let " + set1.name + " be " + set1 + ". Let " + set2.name + " be " + set2 + ". What is the result of the operation " + set1.name +" ";
+
+        switch(op){
+            case 0:
+                result = set1.union(set2);
+                questionText=questionText + "&cup;";
+                break;
+            case 1:
+                result = set1.intersect(set2);
+                questionText=questionText + "&cap;";
+                break;
+            case 2:
+                result = set1.relativeComplement(set2);
+                questionText=questionText + "&#8726;";
+                break;
+        }
+        questionText = questionText + " " + set2.name + ".";
+
+        var wrongAnswers = [];
+
+        /*
+        for ( var i = 0; i < 4 && wrongAnswers.length < numChoices-1  ; i++){
+
+        }*/
+        while ( wrongAnswers.length < numChoices - 1 ){
+            var tempSet = universe.getRandomSubset();
+            for ( var i = 0; i < wrongAnswers.length; i++){
+                if ( wrongAnswers[i].isSameSetAs(tempSet) ){
+                    tempSet = null;
+                    break
+                }
+            }
+            if (tempSet!=null && !result.isSameSetAs(tempSet)){
+                wrongAnswers.push(tempSet);
+            }
+        }
+        arr.push(new MultipleChoiceQuestion
+            (questionText,
+            result.toString(),
+            _.map(wrongAnswers,function(set){ return set.toString() ;})));
+
     }
     return arr;
 }

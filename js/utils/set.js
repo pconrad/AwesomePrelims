@@ -259,6 +259,59 @@ function Set(array, throwDupError, name) {
         this.elements.sort(function() { return 0.5 - Math.random();});
     };
 
+    /** Sorts the elements within the set, letters, then numbers, then tuples, then sets.
+     *  Order of sets or tuples not defined within the set
+     */
+    this.sort = function(){
+        for( var i = 0; i < this.cardinality; i++){
+            if ( typeof(this.elementAt(i)) == "object" && this.elementAt(i) instanceof Set){
+                this.elementAt(i).sort();
+            }
+        }
+        var orderingNumber = function(a){
+            switch(typeof(a)){
+                case "number":
+                    return 0;
+                case "string":
+                    return 1;
+                case "object":
+                    if( a instanceof Tuple){
+                        return 2;
+                    } else if (a instanceof Set){
+                        return 3;
+                    }
+            }
+        }
+
+        this.elements.sort(function(a,b) {
+            if (typeof(a) == typeof(b)){
+                switch (typeof(a)){
+                    case "number":
+                        return a-b;
+                    case "string":
+                        if( a > b ){
+                            return 1;
+                        } else if (a < b){
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    case "object":
+                        if( (a instanceof Set && b instanceof Set) || (a instanceof Tuple && b instanceof Tuple)){
+                            return a.sortOrderRelativeTo(b);
+                        }
+                }
+            }
+            //If we didn't already return:
+            return orderingNumber(a)-orderingNumber(b);
+        });
+    };
+
+    //Helper function for sort. Right now we don't sort sets between themselves, so we just return 0
+    this.sortOrderRelativeTo = function(otherSet){
+        return 0;
+    };
+
     /** Generates a string representation of the set, using braces which are escaped with a \\
      *  in order to be used in Khan Academy exercises laTeX fields.
      *  @returns {string} The escaped string representation of the set
@@ -567,6 +620,11 @@ function Tuple(array) {
             }
         }
         return new Tuple(dupe);
+    };
+
+    //Helper function for sort. Right now we don't sort tuples between themselves, so we just return 0
+    this.sortOrderRelativeTo = function(othertuple){
+        return 0;
     };
 
     /** Generates a string representation of the Tuple, using braces which are escaped with a \\
