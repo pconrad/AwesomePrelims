@@ -58,13 +58,31 @@ function generateSetOperationsQuestions(count, numChoices) {
 
 
     var arr = [];
+    var existing = [];
 
+    var problemExists = function(op, set1, set){
+        for ( var i = 0; i < existing.length; i++){
+            if( existing[i][0] == op &&
+                existing[i][1] == set1 &&
+                existing[i][2] == set2){
+                return true;
+            }
+        }
+        existing.push([op,set1,set2]);
+        return false;
+    }
+    var numOps = 3;
+
+    // TODO: This is dirty! Let's change how the problems are generated so an individual problem set cannot be limited!
+    count = Math.min(sets.length * (sets.length-1)*numOps,count);
     while(arr.length < count) {
         var twoSets = randFromArray(sets,2);
         var set1 = twoSets[0];
         var set2 = twoSets[1];
         var op = _.random(0,2);
-
+        if(problemExists(op,set1,set2)){
+            continue;
+        }
         var result = null;
         var wrongAnswers = [];
 
