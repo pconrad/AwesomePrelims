@@ -165,7 +165,7 @@ function getIncorrectStatements(relation,setLabel1,setLabel2){
 		   getStatement(true, false, true, setLabel1, setLabel2),
 		   getStatement(true, true, false, setLabel1, setLabel2),
 		   getStatement(true, true, true, setLabel1, setLabel2)];
-    result.splice(result.indexOf(getCorrectStatement(relation)),1);
+    result.splice(result.indexOf(getCorrectStatement(relation, setLabel1, setLabel2)),1);
     return result;
 }
 
