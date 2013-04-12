@@ -2,3 +2,6 @@
 	path = js/resources/jsdoc3
 	url = git://github.com/jsdoc3/jsdoc.git
 
+[submodule "js/resources/qunit"]
+	path = js/resources/qunit
+	url = git://github.com/jquery/qunit.git
