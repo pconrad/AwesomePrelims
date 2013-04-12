@@ -33,7 +33,7 @@ function generateQuiz(num, numPage1Questions, numPage2Questions, numChoices) {
 
 
     page1Exercises = generateSetOperationsQuestions(numPage1Questions,numChoices);
-    page2Exercises = generateSetOperationsQuestions(numPage2Questions,numChoices);
+    //  page2Exercises = generateSetOperationsQuestions(numPage2Questions,numChoices);
 
     for (var i=0; i<page1Exercises.length; i++ ) {
 	
@@ -75,7 +75,7 @@ function generateQuiz(num, numPage1Questions, numPage2Questions, numChoices) {
     window.document.getElementById("answers").innerHTML += 
 	answerKeyHeader+answers; 
     
-    questions = answers = "";
+    /*    questions = answers = "";
 
     for (var i=0; i<page2Exercises.length; i++ ) {
 	
@@ -114,5 +114,5 @@ function generateQuiz(num, numPage1Questions, numPage2Questions, numChoices) {
 
     window.document.getElementById("quizzes").innerHTML += page2header+questions; 
     window.document.getElementById("answers").innerHTML += answers; 
-
+    */
 }

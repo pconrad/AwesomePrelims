@@ -22,7 +22,8 @@ function generateQuizzes(howMany, numQuestions, numChoices) {
 
 function generateQuiz(num, numQuestions, numChoices) {
 
-    var header = "<h2 style='page-break-before:always'>Quiz " + num + "</h2>";
+    var header = "<h2 style='page-break-before:always'>CS40 W13 IC15, version: " + num + "</h2>"
+	+"<p style='margin-top:2em;'>Name:_______________________________</p>";
     var questions = "<h3>Questions</h3>";
     var answers = "<h3>Answer Key</h3>";
 
@@ -32,7 +33,7 @@ function generateQuiz(num, numQuestions, numChoices) {
 
     // The question text is now at exercises[i].questionText
 
-    questions += "<p style='margin-top:2em;'> ("
+    questions += "<p style='margin-top:0.5em;'> ("
         + (i+1)
         + ") "
         + exercises[i].questionText + "</p>";
