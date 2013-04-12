@@ -23,8 +23,8 @@ function generateQuizzes(howMany, numQuestions, numChoices) {
 function generateQuiz(num, numQuestions, numChoices) {
 
     var header = "<h2 style='page-break-before:always'>Quiz " + num + "</h2>";
-    var questions = "<h3>Questions</h3>";
-    var answers = "<h3>Answer Key</h3>";
+    var questions = "";
+    var answers = "";
 
     exercises = generateSetOperationsQuestions(numQuestions,7);
 
