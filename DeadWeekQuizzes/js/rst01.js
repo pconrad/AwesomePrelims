@@ -1,11 +1,37 @@
 // rst01.js
 
-function generateExercise() {
+function dispOptions(){
 
+generateQuiz(1, 3, 5)
+
+numQuestionsDropDownBox="<select id=&quot;numQuestionsDropDownBox&quot onChange=\"generateQuizzes(1, this.value, 5)\";>" +
+  "<option value=\"3\">3</option>" +
+  "<option value=\"5\">5</option>" +
+  "<option value=\"10\">10</option>" +
+  "<option value=\"15\">15</option>" +
+"</select>";
+
+window.document.getElementById("numQuestionsDropDown").innerHTML += numQuestionsDropDownBox;
+
+}
+
+
+function generateQuizzes(howMany, numQuestions, numChoices) {
+	window.document.getElementById("quizzes").innerHTML ="";
+    window.document.getElementById("answers").innerHTML ="";
+    for (var i=1; i<=howMany; i++) {
+    generateQuiz(i, numQuestions, numChoices);
+    }
+}
+
+function generateQuiz(num, numQuestions, numChoices) {
+
+    var header = "<h2 style='page-break-before:always'>Quiz " + num + "</h2>";
     var questions = "";
     var answers = "";
 
-    exercises = generateReflexiveSymmetricTransitiveQuestions(10);
+    exercises = generateReflexiveSymmetricTransitiveQuestions(numQuestions,7);
+
     for (var i=0; i<exercises.length; i++ ) {
 
     // The question text is now at exercises[i].questionText
@@ -15,7 +41,6 @@ function generateExercise() {
         + ") "
         + exercises[i].questionText + "</p>";
 
-    var numChoices = 5;
 
     numAnswersResult = exercises[i].selectNumAnswers(numChoices);
 
@@ -39,8 +64,9 @@ function generateExercise() {
         + ". " + theAnswers[correctAnswerIndex]
         + "</p>";
 
-    window.document.getElementById("questions").innerHTML = questions;
-    window.document.getElementById("answers").innerHTML = answers;
     } // for loop over all exercises
+
+    window.document.getElementById("quizzes").innerHTML += header+questions;
+    window.document.getElementById("answers").innerHTML += header+answers;
 
 }
