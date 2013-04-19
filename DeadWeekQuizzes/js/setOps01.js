@@ -14,7 +14,26 @@
 //  or:
 //     generateQuizzes(40, 6, 5, generateReflexiveSymmetricTransitiveQuestions);
 
+
+function dispOptions(){
+
+generateQuiz(1, 3, 5)
+
+numQuestionsDropDownBox="<select id=&quot;numQuestionsDropDownBox&quot onChange=\"generateQuizzes(1, this.value, 5)\";>" +
+  "<option value=\"3\">3</option>" +
+  "<option value=\"5\">5</option>" +
+  "<option value=\"10\">10</option>" +
+  "<option value=\"15\">15</option>" +
+"</select>";
+
+window.document.getElementById("numQuestionsDropDown").innerHTML += numQuestionsDropDownBox;
+
+}
+
+
 function generateQuizzes(howMany, numQuestions, numChoices) {
+	window.document.getElementById("quizzes").innerHTML ="";
+    window.document.getElementById("answers").innerHTML ="";
     for (var i=1; i<=howMany; i++) {
     generateQuiz(i, numQuestions, numChoices);
     }
@@ -22,10 +41,16 @@ function generateQuizzes(howMany, numQuestions, numChoices) {
 
 function generateQuiz(num, numQuestions, numChoices) {
 
+<<<<<<< HEAD
     var header = "<h2 style='page-break-before:always'>CS40 W13 IC15, version: " + num + "</h2>"
 	+"<p style='margin-top:2em;'>Name:_______________________________</p>";
     var questions = "<h3>Questions</h3>";
     var answers = "<h3>Answer Key</h3>";
+=======
+    var header = "<h2 style='page-break-before:always'>Quiz " + num + "</h2>";
+    var questions = "";
+    var answers = "";
+>>>>>>> 334b1487dd42ee2a295576d462bba565f4b514c9
 
     exercises = generateSetOperationsQuestions(numQuestions,7);
 
