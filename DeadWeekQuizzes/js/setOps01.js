@@ -41,16 +41,9 @@ function generateQuizzes(howMany, numQuestions, numChoices) {
 
 function generateQuiz(num, numQuestions, numChoices) {
 
-<<<<<<< HEAD
-    var header = "<h2 style='page-break-before:always'>CS40 W13 IC15, version: " + num + "</h2>"
-	+"<p style='margin-top:2em;'>Name:_______________________________</p>";
-    var questions = "<h3>Questions</h3>";
-    var answers = "<h3>Answer Key</h3>";
-=======
     var header = "<h2 style='page-break-before:always'>Quiz " + num + "</h2>";
     var questions = "";
     var answers = "";
->>>>>>> 334b1487dd42ee2a295576d462bba565f4b514c9
 
     exercises = generateSetOperationsQuestions(numQuestions,7);
 
