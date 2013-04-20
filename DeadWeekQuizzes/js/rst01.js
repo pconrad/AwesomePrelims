@@ -30,7 +30,7 @@ function generateQuiz(num, numQuestions, numChoices) {
     var questions = "";
     var answers = "";
 
-    exercises = generateReflexiveSymmetricTransitiveQuestions(numQuestions,7);
+    exercises = generateReflexiveSymmetricTransitiveQuestions(numQuestions);
 
     for (var i=0; i<exercises.length; i++ ) {
 

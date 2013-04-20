@@ -32,7 +32,7 @@ function generateQuiz(num, numQuestions, numChoices) {
     var questions = "";
     var answers = "";
 
-    exercises = generateFunctionOnetoOneOntoQuestions(numQuestions,7);
+    exercises = generateFunctionOnetoOneOntoQuestions(numQuestions);
 
     for (var i=0; i<exercises.length; i++ ) {
 
