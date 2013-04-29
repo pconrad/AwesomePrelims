@@ -1,11 +1,9 @@
 
-test( "bitsTest", 4, function() {
+test( "bitsTest", 10, function() {
 
 	var longBits1 = new LongBitString(0x1234,0x5678);
 	var longBits2 = new LongBitString(0x89AB,0xCDEF);
 
-	
-	
 	//The following tests are for binary relations over a (single) set
 
 	equal(longBits1.highBits,0x1234,'longBits1.highBits==0x1234' );
@@ -17,15 +15,21 @@ test( "bitsTest", 4, function() {
 	var longBitsA0B0C0D0 = new LongBitString(0xA0B0,0xC0D0);
 	var longBits01020304 = new LongBitString(0x0102,0x0304);
 	var longBits00000000 = new LongBitString(0x0000,0x0000);
+	var longBits0FFF0FFF = new LongBitString(0x0FFF,0x0FFF);
+	var longBits0FFF0000 = new LongBitString(0x0FFF,0x0000);
+	var longBits00000FFF = new LongBitString(0x0000,0x0FFF);
+	var longBits00FF0F00 = new LongBitString(0x00FF,0x0F00);
+	var longBits0F0000FF = new LongBitString(0x0F00,0x00FF);
 	var longBitsFFFFFFFF = new LongBitString(0xFFFF,0xFFFF);
-	var longBitsFFFF0000 = new LongBitString(0xFFFF,0x0000);
-	var longBits0000FFFF = new LongBitString(0x0000,0xFFFF);
-	var longBits00FFFF00 = new LongBitString(0x00FF,0xFF00);
-	var longBitsFF0000FF = new LongBitString(0xFF00,0x00FF);
 
-	equal(_.isEqual(longBitsFF0000FF.bitwiseAnd(longBitsFFFF0000),
-		       new LongBitString(0xFF00,0x0000)),true,'FF0000FF & FFFF0000 => FF000000' );
-	equal(longBitsFF0000FF.bitwiseOr(longBitsFFFF0000),
-	      new LongBitString(0xFFFF,0x00FF),'FF0000FF | FFFF0000 => FFFF00FF' );
-
+	equal(longBits0F0000FF.bitwiseAnd(longBits0FFF0000).isEqual(new LongBitString(0x0F00,0x0000)),true,'0F0000FF & 0FFF0000 => 0F000000' );
+	equal(longBitsFFFFFFFF.bitwiseAnd(longBits0FFF0000).isEqual(new LongBitString(0x0FFF,0x0000)),true,'FFFFFFFF & 0FFF0000 => 0FFF0000' );
+	equal(longBitsFFFFFFFF.bitwiseAnd(longBitsFFFFFFFF).isEqual(new LongBitString(0xFFFF,0xFFFF)),true,'FFFFFFFF & FFFFFFFF => FFFFFFFF' );
+	
+	equal(longBits0F0000FF.bitwiseOr(longBits0FFF0000).isEqual(new LongBitString(0x0FFF,0x00FF)),true,'0F0000FF | 0FFF0000 => 0FFF00FF' );
+	equal(longBits0F0000FF.bitwiseOr(longBitsFFFFFFFF).isEqual(new LongBitString(0xFFFF,0xFFFF)),true,'0F0000FF | FFFFFFFF => FFFFFFFF' );
+	equal(longBits0FFF0000.bitwiseOr(longBits0FFF0000).isEqual(new LongBitString(0x0FFF,0x0000)),true,'0FFF0000 | 0FFF0000 => 0FFF0000' );
+	
+	  
     });
+    
