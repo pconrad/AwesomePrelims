@@ -9,7 +9,7 @@ No more individual dirs... just js and java
 
 Best:
 
-* JavaScript Enlightenment, By: Cody Lindley, Publisher: O'Reilly Media, Inc., Pub. Date: January 7, 2013, Print ISBN-13: 978-1-4493-4288-3
+* JavaScript Enlightenment, By: Cody Lindley, Publisher: O'Reilly Media, Inc., Pub. Date: January 7, 2013, Print ISBN-13: 978-1-4493-4288-3 
 ** http://proquest.safaribooksonline.com/book/programming/javascript/9781449344412
 ** Off campus: http://proquest.safaribooksonline.com.proxy.library.ucsb.edu:2048/book/programming/javascript/9781449344412
 
