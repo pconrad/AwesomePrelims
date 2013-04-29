@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
    MakeTests creates QUnit tests for a JavaScript port of Java's
@@ -17,6 +18,18 @@ public class MakeTests extends ArrayList<String> {
 
 	// TODO: Write code here to add tests.
 
+	String thisTest = 
+	    " var r = new Random(new LongBitString(0x123456,0x789ABC));\n";
+
+	Random r = new Random(0x123456789ABCL);
+	int expected = r.nextInt();
+
+	thisTest += "equal(" + expected + ",r.nextInt(),'first call to r.nextInt()');";
+
+	mt.add(thisTest);
+
+
+
 	writeHeader(mt.size());
 	for (String s: mt) {
 	    System.out.println(s);
@@ -24,6 +37,8 @@ public class MakeTests extends ArrayList<String> {
 	writeTrailer();
 
     }
+
+    
 
 
     public static void writeHeader(int numTests) {
