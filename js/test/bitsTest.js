@@ -1,5 +1,5 @@
 
-test( "bitsTest", 10, function() {
+test( "bitsTest", 13, function() {
 
 	var longBits1 = new LongBitString(0x1234,0x5678);
 	var longBits2 = new LongBitString(0x89AB,0xCDEF);
@@ -22,14 +22,20 @@ test( "bitsTest", 10, function() {
 	var longBits0F0000FF = new LongBitString(0x0F00,0x00FF);
 	var longBitsFFFFFFFF = new LongBitString(0xFFFF,0xFFFF);
 
+/* testing for And */
 	equal(longBits0F0000FF.bitwiseAnd(longBits0FFF0000).isEqual(new LongBitString(0x0F00,0x0000)),true,'0F0000FF & 0FFF0000 => 0F000000' );
 	equal(longBitsFFFFFFFF.bitwiseAnd(longBits0FFF0000).isEqual(new LongBitString(0x0FFF,0x0000)),true,'FFFFFFFF & 0FFF0000 => 0FFF0000' );
 	equal(longBitsFFFFFFFF.bitwiseAnd(longBitsFFFFFFFF).isEqual(new LongBitString(0xFFFF,0xFFFF)),true,'FFFFFFFF & FFFFFFFF => FFFFFFFF' );
-	
+
+/* testing for Or	 */
 	equal(longBits0F0000FF.bitwiseOr(longBits0FFF0000).isEqual(new LongBitString(0x0FFF,0x00FF)),true,'0F0000FF | 0FFF0000 => 0FFF00FF' );
 	equal(longBits0F0000FF.bitwiseOr(longBitsFFFFFFFF).isEqual(new LongBitString(0xFFFF,0xFFFF)),true,'0F0000FF | FFFFFFFF => FFFFFFFF' );
 	equal(longBits0FFF0000.bitwiseOr(longBits0FFF0000).isEqual(new LongBitString(0x0FFF,0x0000)),true,'0FFF0000 | 0FFF0000 => 0FFF0000' );
 	
-	  
+/* 	testing for XOr */
+	equal(longBits0F0000FF.bitwiseXOr(longBits0FFF0000).isEqual(new LongBitString(0x00FF,0x00FF)),true,'0F0000FF ^ 0FFF0000 => 00FF00FF' );
+	equal(longBits0F0000FF.bitwiseXOr(longBitsFFFFFFFF).isEqual(new LongBitString(0xF0FF,0xFF00)),true,'0F0000FF ^ FFFFFFFF => F0FFFF00' );
+	equal(longBits0FFF0000.bitwiseXOr(longBits0FFF0000).isEqual(new LongBitString(0x0000,0x0000)),true,'0FFF0000 ^ 0FFF0000 => 00000000' );
+  
     });
     
