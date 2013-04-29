@@ -1,5 +1,5 @@
 
-test( "bitsTest", 13, function() {
+test( "bitsTest", 16, function() {
 
 	var longBits1 = new LongBitString(0x1234,0x5678);
 	var longBits2 = new LongBitString(0x89AB,0xCDEF);
@@ -36,6 +36,11 @@ test( "bitsTest", 13, function() {
 	equal(longBits0F0000FF.bitwiseXOr(longBits0FFF0000).isEqual(new LongBitString(0x00FF,0x00FF)),true,'0F0000FF ^ 0FFF0000 => 00FF00FF' );
 	equal(longBits0F0000FF.bitwiseXOr(longBitsFFFFFFFF).isEqual(new LongBitString(0xF0FF,0xFF00)),true,'0F0000FF ^ FFFFFFFF => F0FFFF00' );
 	equal(longBits0FFF0000.bitwiseXOr(longBits0FFF0000).isEqual(new LongBitString(0x0000,0x0000)),true,'0FFF0000 ^ 0FFF0000 => 00000000' );
+	
+/* 	testing splitBits */
+	equal(splitBits(Math.pow(2,32)-1).isEqual(new LongBitString(1,Math.pow(2,31)-1)), true ,'Testing split of 2^32-1: high bits: 0000001 low bits: 7ffffff' );
+	equal(splitBits(Math.pow(2,31)-1).isEqual(new LongBitString(0,Math.pow(2,31)-1)), true ,'Testing split of 2^31-1: high bits: 0000000 low bits: 7ffffff' );
+	equal(splitBits(0x03FFFFFFD48A16).isEqual(new LongBitString(0x0007FFFF,0x7FD48A16)), true ,'Testing split of 0x3ffffffd48a16: high bits: 0007FFFF low bits: 7FD48A16' );
   
     });
     
