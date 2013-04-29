@@ -3,6 +3,9 @@ java/MoodleXMLRhino/build
 # ignore emacs backup files
 *~
 
+# Java ignores
+*.class
+
 #ignore Mac OS X backup files
 .DS_Store
 
