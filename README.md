@@ -9,3 +9,5 @@ No more individual dirs... just js and java
 
 * Maintainable JavaScript, By: Nicholas C. Zakas, O'Reilly Media, Inc., 2012, ISBN-13: 978-1-4493-2768-2
 ** http://proquest.safaribooksonline.com/book/programming/javascript/9781449328092
+* JavaScript Web Applications, By: Alex MacCaw, O'Reilly Media, Inc, 2011, ISBN-13: 978-1-4493-0351-8
+** http://proquest.safaribooksonline.com/book/programming/javascript/9781449308216
