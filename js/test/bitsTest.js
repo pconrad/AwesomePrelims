@@ -39,8 +39,9 @@ test( "bitsTest", 17, function() {
 	
 /* 	testing splitBits */
 	equal(splitBits(0x5DEECE66D).isEqual(new LongBitString(0x5DE,0xECE66D)), true ,'Testing split of 0x0005DEECE66D: high bits: 0x0005DE low bits: 0xECE66D' );
-		equal(splitBits(0x123456789ABC).isEqual(new LongBitString(0x123456,0x789ABC)), true ,'Testing split of 0x123456789ABC: high bits: 0x123456 low bits: 0x789ABC');
-		equal(splitBits(0x0).isEqual(new LongBitString(0x0,0x0)), true ,'Testing split of 0x000000000000: high bits: 0x000000 low bits: 0x000000');
-			equal(splitBits(0xFFFFFFFFFFFF).isEqual(new LongBitString(0xFFFFFF,0xFFFFFF)), true ,'Testing split of 0xFFFFFFFFFFFF: high bits: 0xFFFFFF low bits: 0xFFFFFF');
+	equal(splitBits(0x123456789ABC).isEqual(new LongBitString(0x123456,0x789ABC)), true ,'Testing split of 0x123456789ABC: high bits: 0x123456 low bits: 0x789ABC');
+	equal(splitBits(0x0).isEqual(new LongBitString(0x0,0x0)), true ,'Testing split of 0x000000000000: high bits: 0x000000 low bits: 0x000000');
+	equal(splitBits(0xFFFFFFFFFFFF).isEqual(new LongBitString(0xFFFFFF,0xFFFFFF)), true ,'Testing split of 0xFFFFFFFFFFFF: high bits: 0xFFFFFF low bits: 0xFFFFFF');
+
     });
     
