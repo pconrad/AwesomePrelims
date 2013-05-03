@@ -12,7 +12,7 @@
   Note also that since javascript uses IEEE floating point notation, the largest whole number that can be stored is only 53 bits. If you used this library for numbers larger than 53 bits, you are entering uncharted waters.
 */
 
-/* sizeOfSmallerNumbers can be changed. If it's changed to a number >31, undesired results may occur. */
+/* sizeOfSmallerNumbers can be changed. If it's changed to a number >31 or <16, undesired results may occur. */
 sizeOfSmallerNumbers = 24;
 
 /* LongBitsString is our object that has the two smaller numbers that together represent the larger number. With these two components we are able to perform the bitwise and shift operations. */
@@ -66,10 +66,24 @@ function LongBitString(highBits,lowBits) {
 	return x;  
 	}
 	
-	//RightShift31 shifts bits 31 spots to the right
+	//RightShift31 shifts bits 31 spots to the right  (>>31)
 	this.rightShift31 = function(numToShiftBy){
-		return new LongBitString(0, this.highBits>>(31-sizeOfSmallerNumbers));  
+		
+		return new LongBitString(0, this.highBits >>> (31 - sizeOfSmallerNumbers));  
 	} 
+	
+	//RightShift16 shifts bits 16 spots to the right (>>>16)
+	this.rightShift16 = function(numToShiftBy){
+		
+		var x = new LongBitString(this.highBits, this.lowBits);
+		x.lowBits >>>= 16;
+		x.highBits <<= 16;
+		x.highBits >>>= (32-sizeOfSmallerNumbers);
+		x.lowBits += x.highBits;
+		x.highBits = this.highBits >>> 16;
+		return x;  
+	} 
+
 }
 
 /* OriginalNumber must be less than 2*sizeOfSmallerNumbers. */
