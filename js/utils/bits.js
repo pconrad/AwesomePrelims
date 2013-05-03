@@ -66,11 +66,9 @@ function LongBitString(highBits,lowBits) {
 	return x;  
 	}
 	
-	//Left shift implementation..does nothing yet.
-	this.leftShift = function(numToShiftBy){
-		var oldHighBits = this.highBits;
-		var oldLowBits = this.lowBits;
-		
+	//RightShift31 shifts bits 31 spots to the right
+	this.rightShift31 = function(numToShiftBy){
+		return new LongBitString(0, this.highBits>>(31-sizeOfSmallerNumbers));  
 	} 
 }
 
