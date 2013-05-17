@@ -99,6 +99,13 @@ function LongBitString(highBits,lowBits) {
 		
 		return x;
 	}
+	
+	//Times multiplies this and multiplier, and returns the result
+	//Note: might not work when product is more than 48 bits
+	this.times = function(multiplier){
+		
+		return this; //STUB!
+		}
 
 }
 
