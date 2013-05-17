@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-
 test( "bitsTest", 26, function() {
-=======
-test( "bitsTest", 23, function() {
->>>>>>> 45f0d2bf170341d681c77ba6892f0404100df5a4
+
 
 	var longBits1 = new LongBitString(0x1234,0x5678);
 	var longBits2 = new LongBitString(0x89AB,0xCDEF);
@@ -30,6 +26,8 @@ test( "bitsTest", 23, function() {
 	var longBits123456789ABC = new LongBitString(0x123456,0x789ABC);
 	var longBits0FFFFFFFFFFF = new LongBitString(0x0FFFFF,0xFFFFFF);
 	var longBits00000FFFFFFF = new LongBitString(0x00000F,0xFFFFFF);
+	var longBits00000000 = new LongBitString(0x0,0x0);
+	var longBits0F0000FF = new LongBitString(0x0F00,0x00FF);
 
 /* testing for And */
 	equal(longBits0F000000FF00.bitwiseAnd(longBits0FFF00000000).isEqual(new LongBitString(0x0F0000,0x000000)),true,'0F000000FF00 & 0FFF00000000 => 0F00000000' );
