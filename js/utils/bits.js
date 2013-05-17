@@ -67,13 +67,13 @@ function LongBitString(highBits,lowBits) {
 	}
 	
 	//RightShift31 shifts bits 31 spots to the right  (>>31)
-	this.rightShift31 = function(numToShiftBy){
+	this.rightShift31 = function(){
 		
 		return new LongBitString(0, this.highBits >>> (31 - sizeOfSmallerNumbers));  
 	} 
 	
 	//RightShift16 shifts bits 16 spots to the right (>>>16)
-	this.rightShift16 = function(numToShiftBy){
+	this.rightShift16 = function(){
 		
 		var x = new LongBitString(this.highBits, this.lowBits);
 		x.lowBits >>>= 16;
@@ -83,6 +83,22 @@ function LongBitString(highBits,lowBits) {
 		x.highBits = this.highBits >>> 16;
 		return x;  
 	} 
+	
+	//Plus sums this and addend, and returns the result
+	//Note: might not work when sum is more than 48 bits
+	this.plus = function(addend){
+		
+		var x = new LongBitString(this.highBits, this.lowBits);
+		x.lowBits += addend.lowBits;
+		x.highBits +=addend.highBits;
+		
+		//check overflow from lowBits
+		var overflowBits = x.lowBits >>> sizeOfSmallerNumbers;
+		x.lowBits -= overflowBits << sizeOfSmallerNumbers;
+		x.highBits +=overflowBits;
+		
+		return x;
+	}
 
 }
 
