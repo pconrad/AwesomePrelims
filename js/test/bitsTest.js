@@ -1,4 +1,4 @@
-test( "bitsTest", 26, function() {
+test( "bitsTest", 28, function() {
 
 
 	var longBits1 = new LongBitString(0x1234,0x5678);
@@ -28,6 +28,8 @@ test( "bitsTest", 26, function() {
 	var longBits00000FFFFFFF = new LongBitString(0x00000F,0xFFFFFF);
 	var longBits00000000 = new LongBitString(0x0,0x0);
 	var longBits0F0000FF = new LongBitString(0x0F00,0x00FF);
+	var longBits1111111 = new LongBitString(0x1,0x111111);
+	var longBits789ABC = new LongBitString(0x0,0x789ABC);
 
 /* testing for And */
 	equal(longBits0F000000FF00.bitwiseAnd(longBits0FFF00000000).isEqual(new LongBitString(0x0F0000,0x000000)),true,'0F000000FF00 & 0FFF00000000 => 0F00000000' );
@@ -65,7 +67,13 @@ test( "bitsTest", 26, function() {
 	equal(longBits00000000.plus(longBits0F0000FF).isEqual(longBits0F0000FF), true ,'00000000+0F0000FF=0F0000FF' );
 	equal(longBits123456789ABC.plus(longBits123456789ABC).isEqual(new LongBitString(0x2468AC,0xF13578)), true ,'123456789ABC+123456789ABC=2468ACF13578' );
 	equal(longBits0FFFFFFFFFFF.plus(longBits00000FFFFFFF).isEqual(new LongBitString(0x10000F,0xFFFFFE)), true ,'s0FFFFFFFFFFF+00000FFFFFFF=1000FFFFFFE' ); //this last one has an overflow
-
+	
+	
+	/* testing times	 */
+	equal(longBits00000000.times(longBits0F0000FF).isEqual(longBits00000000), true ,'00000000*0F0000FF=000000000000' );
+	equal(longBits1111111.times(longBits789ABC).isEqual(new LongBitString(0x80A50C,0xC4C27C)), true ,'1111111*789ABC=80A50CC4C27C' );
+	
+	
     });
     
     

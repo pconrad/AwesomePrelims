@@ -104,7 +104,11 @@ function LongBitString(highBits,lowBits) {
 	//Note: might not work when product is more than 48 bits
 	this.times = function(multiplier){
 		
-		return this; //STUB!
+		var x = new LongBitString(this.highBits, this.lowBits);
+		var product = (this.lowBits + (this.highBits << sizeOfSmallerNumbers) ) * ( multiplier.lowBits + (multiplier.highBits << sizeOfSmallerNumbers) );
+
+		return splitBits(product);
+
 		}
 
 }
