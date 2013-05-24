@@ -11,14 +11,17 @@
   with a contract similar to that of the Random object in Java SE 7
 
 */
-
+//Random creates a new random number generator using a single LongBitString seed. The seed is the initial value of the internal state of the pseudorandom number generator which is maintained by method next(int).
 function Random(seed) {
 
-    this.attribute1 = 0; // initialize all attributes
+    this.randomValue = seed; // initialize all attributes
 
-    this.someMethod = function() {
-        // code for method goes here
+    this.setSeed = function(seed) {
+        
+        this.randomValue = (this.randomValue.bitwiseOr(splitBits(0x5DEECE66D))).bitwiseAnd(splitBits(ffffffffffff));
     }
+    
+    
 
 }
 
