@@ -1,4 +1,4 @@
-/* for quick java testing: http://rextester.com/runcode */
+/* for quick java testing: http://rextester.com/QRT10759 */
 
 test("testRandom",2,function() {
 
