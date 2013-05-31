@@ -9,17 +9,29 @@
   
   Provide a stream of random numbers that is seeded and repeatable,
   with a contract similar to that of the Random object in Java SE 7
+  Implementing everyting from JavaDoc except for nextByte
 
 */
 //Random creates a new random number generator using a single LongBitString seed. The seed is the initial value of the internal state of the pseudorandom number generator which is maintained by method next(int).
 function Random(seed) {
 
-    this.randomValue = seed; // initialize all attributes
-
-    this.setSeed = function(seed) {
+/* 	Sets the seed of this random number generator using a single long seed. The general contract of setSeed is that it alters the state of this random number generator object so as to be in exactly the same state as if it had just been created with the argument seed as a seed. The method setSeed is implemented by class Random by atomically updating the seed*/
+	this.setSeed = function(seed) {
         
-        this.randomValue = (seed.bitwiseXOr(splitBits(0x5DEECE66D))).bitwiseAnd(splitBits(0xffffffffffff));
+        this.currentSeed = (seed.bitwiseXOr(splitBits(0x5DEECE66D))).bitwiseAnd(splitBits(0xffffffffffff));
     }
+
+    this.setSeed(seed); // constructor calls setSeed to initialize all attributes
+    
+/*     The general contract of next is that it returns an int value and if the argument bits is between 1 and 32 (inclusive), then that many low-order bits of the returned value will be (approximately) independently chosen bit values, each of which is (approximately) equally likely to be 0 or 1. The method next is implemented by class Random by atomically updating the seed */
+
+/* This is a linear congruential pseudorandom number generator, as defined by D. H. Lehmer and described by Donald E. Knuth in The Art of Computer Programming, Volume 3: Seminumerical Algorithms, section 3.2.1. */
+    this.next = function(bits) {
+    	this.currentSeed = (this.currentSeed.times(splitBits(0x5DEECE66D)).plus(splitBits(0xB))).bitwiseAnd(splitBits(0xffffffffffff));
+    	/* if (bits==) */
+    }
+
+    
     
     
 

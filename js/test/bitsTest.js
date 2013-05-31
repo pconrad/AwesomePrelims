@@ -1,4 +1,4 @@
-test( "bitsTest", 28, function() {
+test( "bitsTest", 31, function() {
 
 
 	var longBits1 = new LongBitString(0x1234,0x5678);
@@ -22,7 +22,7 @@ test( "bitsTest", 28, function() {
 	var longBits0F000000FF00 = new LongBitString(0x0F0000,0x00FF00);
 	var longBitsFFFF00FFFF00 = new LongBitString(0xFFFF00,0xFFFF00);
 	var longBits5DEECE66D = new LongBitString(0x5DE,0xECE66D);
-	var longBitsFFFF00FFFF00FFFF = new LongBitString(0xFFFFFF,0xFFFFFF);
+	var longBitsFFFFFFFFFFFF = new LongBitString(0xFFFFFF,0xFFFFFF);
 	var longBits123456789ABC = new LongBitString(0x123456,0x789ABC);
 	var longBits0FFFFFFFFFFF = new LongBitString(0x0FFFFF,0xFFFFFF);
 	var longBits00000FFFFFFF = new LongBitString(0x00000F,0xFFFFFF);
@@ -54,13 +54,18 @@ test( "bitsTest", 28, function() {
 	
 /* 	testing rightShift31 */
 	equal(longBits5DEECE66D.rightShift31().isEqual(new LongBitString(0x0,0xB)), true ,'0x5DEECE66D>>31 => 0xB' );
-	equal(longBitsFFFF00FFFF00FFFF.rightShift31().isEqual(new LongBitString(0x0,0x1FFFF)), true ,'0xFFFFFFFFFFFF>>31 => 0x1FFFF' );
+	equal(longBitsFFFFFFFFFFFF.rightShift31().isEqual(new LongBitString(0x0,0x1FFFF)), true ,'0xFFFFFFFFFFFF>>31 => 0x1FFFF' );
 	equal(longBits123456789ABC.rightShift31().isEqual(new LongBitString(0x0,0x2468)), true ,'0x123456789ABC>>31 => 0x2468' );
 	
 /* 	testing rightShift16 */
 	equal(longBits5DEECE66D.rightShift16().isEqual(new LongBitString(0x0,0x5DEEC)), true ,'0x5DEECE66D>>>16 => 0x5DEEC' );
-	equal(longBitsFFFF00FFFF00FFFF.rightShift16().isEqual(new LongBitString(0xFF,0xFFFFFF)), true ,'0xFFFFFFFFFFFF>>>16 => 0xFFFFFFFF' );
+	equal(longBitsFFFFFFFFFFFF.rightShift16().isEqual(new LongBitString(0xFF,0xFFFFFF)), true ,'0xFFFFFFFFFFFF>>>16 => 0xFFFFFFFF' );
 	equal(longBits123456789ABC.rightShift16().isEqual(new LongBitString(0x12,0x345678)), true ,'0x123456789ABC>>>16 => 0x12345678' );
+	
+/* 	testing rightShift15 */
+	equal(longBits5DEECE66D.rightShift15().isEqual(new LongBitString(0x0,0xBBDD9)), true ,'0x5DEECE66D>>>15 => 0xBBDD9' );
+	equal(longBitsFFFFFFFFFFFF.rightShift15().isEqual(new LongBitString(0x1FF,0xFFFFFF)), true ,'0xFFFFFFFFFFFF>>>15 => 0x1FFFFFFFF' );
+	equal(longBits123456789ABC.rightShift15().isEqual(new LongBitString(0x24,0x68ACF1)), true ,'0x123456789ABC>>>15 => 0x2468ACF1' );
 	
 	
 /* testing plus	 */
