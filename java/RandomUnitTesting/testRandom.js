@@ -10,6 +10,4 @@ r.setSeed(new LongBitString(0x123456,0x789ABC));
 
 equal(new LongBitString(0x123188,0x947cd1).isEqual(r.randomValue),true,'testing setSeed'); 
 
-alert(r.randomValue);
-
 });

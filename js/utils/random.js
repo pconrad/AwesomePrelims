@@ -18,7 +18,7 @@ function Random(seed) {
 
     this.setSeed = function(seed) {
         
-        this.randomValue = (seed.bitwiseOr(splitBits(0x5DEECE66D))).bitwiseAnd(splitBits(0xffffffffffff));
+        this.randomValue = (seed.bitwiseXOr(splitBits(0x5DEECE66D))).bitwiseAnd(splitBits(0xffffffffffff));
     }
     
     
