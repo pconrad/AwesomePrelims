@@ -13,7 +13,7 @@
 */
 
 /* sizeOfSmallerNumbers can be changed. If it's changed to a number >31 or <16, undesired results may occur. */
-sizeOfSmallerNumbers = 24;
+sizeOfSmallerNumbers = 32;
 
 /* LongBitsString is our object that has the two smaller numbers that together represent the larger number. With these two components we are able to perform the bitwise and shift operations. */
 function LongBitString(highBits,lowBits) {
@@ -113,6 +113,5 @@ function splitBits(originalNumber){
 
 	var highBits = Math.floor(originalNumber / Math.pow(2, sizeOfSmallerNumbers));
 	var lowBits = originalNumber - (highBits * Math.pow(2, sizeOfSmallerNumbers));
-	
 	return (new LongBitString(highBits,lowBits));
 }
