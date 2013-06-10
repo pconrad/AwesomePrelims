@@ -115,3 +115,24 @@ function splitBits(originalNumber){
 	var lowBits = originalNumber - (highBits * Math.pow(2, sizeOfSmallerNumbers));
 	return (new LongBitString(highBits,lowBits));
 }
+
+/* OriginalNumber must be less than 2*sizeOfSmallerNumbers. */
+/* This is for numbers that can't even be stored in js to begin with (larger than 54 bits) and thus need to be inputted as a string */
+/* Note: input the number without 0x formatting, just enter the hex number without the leading 0x */
+/* Untested for sizeOfSmallerNumbers not divisible by 4 */
+function longSplitBits(originalNumberAsString){
+
+	var stringLength = originalNumberAsString.length;
+
+	if (stringLength > (sizeOfSmallerNumbers/4)){
+		
+		newHighBits = originalNumberAsString.substring(0, stringLength-(sizeOfSmallerNumbers/4));
+		newLowBits = originalNumberAsString.substr(stringLength-(sizeOfSmallerNumbers/4), (sizeOfSmallerNumbers/4));
+		return (new LongBitString(parseInt(newHighBits,16),parseInt(newLowBits,16)));
+		}
+	
+	else{
+		return (new LongBitString(parseInt("0",16),parseInt(originalNumberAsString,16)));
+		}
+	
+}
