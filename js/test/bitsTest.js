@@ -1,5 +1,4 @@
-test( "bitsTest", 36, function() {	
-	
+test( "bitsTest", 57, function() {	
 	
 	//Constructor Testing:
 	var longBits1 = new LongBitString(0x12345678,0x12345678);
@@ -61,5 +60,39 @@ test( "bitsTest", 36, function() {
 	
 	equal(longSplitBits("FFFFFFFF00000000").bitwiseXOr(longSplitBits("FFFFFFFF00000000")).isEqual(new LongBitString(0x00000000,0x00000000)),true,'0xFFFFFFFF00000000 ^ 0xFFFFFFFF00000000 => 0x0000000000000000' );
 	equal(longSplitBits("000000000000000F").bitwiseXOr(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0xFFFFFFFF,0xFFFFFFF0)),true,'0x1000000000000000 ^ 0xFFFFFFFFFFFFFFFF => 0xFFFFFFFFFFFFFFF0' );
+
+
+	//rightShift by 31 testing
+	equal(splitBits(0x5DEECE66D).rightShift(31).isEqual(new LongBitString(0x0,0xB)), true ,'0x5DEECE66D>>31 => 0xB' );
+	equal(splitBits(0xFFFFFFFFFFFF).rightShift(31).isEqual(new LongBitString(0x0,0x1FFFF)), true ,'0xFFFFFFFFFFFF>>31 => 0x1FFFF' );
+	equal(splitBits(0x123456789ABC).rightShift(31).isEqual(new LongBitString(0x0,0x2468)), true ,'0x123456789ABC>>31 => 0x2468' );
+	
+	equal(longSplitBits("5DEECE66D").rightShift(31).isEqual(new LongBitString(0x0,0xB)), true ,'0x5DEECE66D>>31 => 0xB' );
+	equal(longSplitBits("FFFFFFFFFFFF").rightShift(31).isEqual(new LongBitString(0x0,0x1FFFF)), true ,'0xFFFFFFFFFFFF>>31 => 0x1FFFF' );
+	equal(longSplitBits("123456789ABC").rightShift(31).isEqual(new LongBitString(0x0,0x2468)), true ,'0x123456789ABC>>31 => 0x2468' );
+	
+	equal(longSplitBits("FFFFFFFFFFFFFFFF").rightShift(31).isEqual(new LongBitString(0x1,0xFFFFFFFF)), true ,'0xFFFFFFFFFFFFFFFF>>31 => 0x1FFFFFFFF' );
+
+	//rightShift by 16 testing
+	equal(splitBits(0x5DEECE66D).rightShift(16).isEqual(new LongBitString(0x0,0x5DEEC)), true ,'0x5DEECE66D>>>16 => 0x5DEEC' );
+	equal(splitBits(0xFFFFFFFFFFFF).rightShift(16).isEqual(new LongBitString(0x0,0xFFFFFFFF)), true ,'0xFFFFFFFFFFFF>>>16 => 0xFFFFFFFF' );
+	equal(splitBits(0x123456789ABC).rightShift(16).isEqual(new LongBitString(0x0,0x12345678)), true ,'0x123456789ABC>>>16 => 0x12345678' );
+	
+	equal(longSplitBits("5DEECE66D").rightShift(16).isEqual(new LongBitString(0x0,0x5DEEC)), true ,'0x5DEECE66D>>>16 => 0x5DEEC' );
+	equal(longSplitBits("FFFFFFFFFFFF").rightShift(16).isEqual(new LongBitString(0x0,0xFFFFFFFF)), true ,'0xFFFFFFFFFFFF>>>16 => 0xFFFFFFFF' );
+	equal(longSplitBits("123456789ABC").rightShift(16).isEqual(new LongBitString(0x0,0x12345678)), true ,'0x123456789ABC>>>16 => 0x12345678' );
+	
+	equal(longSplitBits("FFFFFFFFFFFFFFFF").rightShift(16).isEqual(new LongBitString(0xFFFF,0xFFFFFFFF)), true ,'0xFFFFFFFFFFFFFFFF>>16 => 0xFFFFFFFFFFFF' );
+
+//rightShift by 17 testing
+	equal(splitBits(0x5DEECE66D).rightShift(17).isEqual(new LongBitString(0x0,0x2EF76)), true ,'0x5DEECE66D>>>17 => 0x2EF76' );
+	equal(splitBits(0xFFFFFFFFFFFF).rightShift(17).isEqual(new LongBitString(0x0,0x7FFFFFFF)), true ,'0xFFFFFFFFFFFF>>>17 => 0x7FFFFFFF' );
+	equal(splitBits(0x123456789ABC).rightShift(17).isEqual(new LongBitString(0x0,0x91A2B3C)), true ,'0x123456789ABC>>>17 => 0x91A2B3C' );
+	
+	equal(longSplitBits("5DEECE66D").rightShift(17).isEqual(new LongBitString(0x0,0x2EF76)), true ,'0x5DEECE66D>>>17 => 0x2EF76' );
+	equal(longSplitBits("FFFFFFFFFFFF").rightShift(17).isEqual(new LongBitString(0x0,0x7FFFFFFF)), true ,'0xFFFFFFFFFFFF>>>17 => 0x7FFFFFFF' );
+	equal(longSplitBits("123456789ABC").rightShift(17).isEqual(new LongBitString(0x0,0x91A2B3C)), true ,'0x123456789ABC>>>17 => 0x91A2B3C' );
+	
+	equal(longSplitBits("FFFFFFFFFFFFFFFF").rightShift(17).isEqual(new LongBitString(0x7FFF,0xFFFFFFFF)), true ,'0xFFFFFFFFFFFFFFFF>>17 => 0x7FFFFFFFFFFF' );
 
     });
