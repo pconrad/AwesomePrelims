@@ -56,7 +56,7 @@ function LongBitString(highBits,lowBits) {
     //OR implementation
     this.bitwiseOr = function(otherLongBitString) {
     
-   		 //we have to handle the sign bits separately:
+   		//we have to handle the sign bits separately:
 		var signBits = new LongBitString(this.highBits >>> 31 ,this.lowBits >>>31);
 		var otherSignBits = new LongBitString(otherLongBitString.highBits >>> 31 ,otherLongBitString.lowBits >>>31);
 		var oredSignBits = new LongBitString(signBits.highBits | otherSignBits.highBits, signBits.lowBits | otherSignBits.lowBits);
@@ -75,11 +75,20 @@ function LongBitString(highBits,lowBits) {
     //XOR implementation
     this.bitwiseXOr = function(otherLongBitString){
 	
-	var x = new LongBitString(otherLongBitString.highBits, otherLongBitString.lowBits);
-	x.highBits ^= this.highBits;
-	x.lowBits ^= this.lowBits;
-	
-	return x;  
+		//we have to handle the sign bits separately:
+		var signBits = new LongBitString(this.highBits >>> 31 ,this.lowBits >>>31);
+		var otherSignBits = new LongBitString(otherLongBitString.highBits >>> 31 ,otherLongBitString.lowBits >>>31);
+		var xoredSignBits = new LongBitString(signBits.highBits ^ otherSignBits.highBits, signBits.lowBits ^ otherSignBits.lowBits); 
+		
+		//then we can remove the signed bits, and handle the rest of the bits
+		var nonSignBits = new LongBitString((this.highBits << 1) >>> 1 , (this.lowBits <<1) >>> 1);
+		var otherNonSignBits = new LongBitString((otherLongBitString.highBits << 1) >>> 1 , (otherLongBitString.lowBits <<1) >>> 1);
+		
+		var xoredNonSignBits = new LongBitString(nonSignBits.highBits ^ otherNonSignBits.highBits, nonSignBits.lowBits ^ otherNonSignBits.lowBits);
+		
+		//now we must put these two sets of bits together:
+		return (new LongBitString(xoredNonSignBits.highBits + (xoredSignBits.highBits * Math.pow(2, sizeOfSmallerNumbers-1)), xoredNonSignBits.lowBits + (xoredSignBits.lowBits * Math.pow(2, sizeOfSmallerNumbers-1))));
+
 	}
 	
 	//RightShift shifts bits numLessThan32 spots to the right  (>>numLessThan32)

@@ -1,4 +1,4 @@
-test( "bitsTest", 30, function() {	
+test( "bitsTest", 36, function() {	
 	
 	
 	//Constructor Testing:
@@ -52,5 +52,14 @@ test( "bitsTest", 30, function() {
 	equal(longSplitBits("FFFFFFFF00000000").bitwiseOr(longSplitBits("FFFFFFFF00000000")).isEqual(new LongBitString(0xFFFFFFFF,0x00000000)),true,'0xFFFFFFFF00000000 | 0xFFFFFFFF00000000 => 0xFFFFFFFF00000000' );
 	equal(longSplitBits("0123456789ABCDEF").bitwiseOr(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0xFFFFFFFF,0xFFFFFFFF)),true,'0x0123456789ABCDEF | 0xFFFFFFFFFFFFFFFF => 0xFFFFFFFFFFFFFFFF' );
 	
+	// XOR Testing
+	equal(splitBits(0x0F000000FF00).bitwiseXOr(splitBits(0x0FFF00000000)).isEqual(new LongBitString(0x00FF,0x0000FF00)),true,'0x0F000000FF00 ^ 0x0FFF00000000 => 0x00FF00000FF00' );
+	equal(splitBits(0x0F000000FF00).bitwiseXOr(splitBits(0xFFFF00FFFF00)).isEqual(new LongBitString(0xF0FF,0x00FF0000)),true,'0x0F000000FF00 ^ 0xFFFF00FFFF00 => 0xF0FF00FF0000' );
 	
+	equal(longSplitBits("0F000000FF00").bitwiseXOr(longSplitBits("0FFF00000000")).isEqual(new LongBitString(0x00FF,0x0000FF00)),true,'0x0F000000FF00 ^ 0x0FFF00000000 => 0x00FF0000FF00');
+	equal(longSplitBits("0F000000FF00").bitwiseXOr(longSplitBits("FFFF00FFFF00")).isEqual(new LongBitString(0xF0FF,0x00FF0000)),true,'0x0F000000FF00 ^ 0xFFFF00FFFF00 => 0xF0FF00FF0000' );
+	
+	equal(longSplitBits("FFFFFFFF00000000").bitwiseXOr(longSplitBits("FFFFFFFF00000000")).isEqual(new LongBitString(0x00000000,0x00000000)),true,'0xFFFFFFFF00000000 ^ 0xFFFFFFFF00000000 => 0x0000000000000000' );
+	equal(longSplitBits("000000000000000F").bitwiseXOr(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0xFFFFFFFF,0xFFFFFFF0)),true,'0x1000000000000000 ^ 0xFFFFFFFFFFFFFFFF => 0xFFFFFFFFFFFFFFF0' );
+
     });
