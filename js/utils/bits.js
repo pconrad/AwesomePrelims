@@ -105,17 +105,25 @@ function LongBitString(highBits,lowBits) {
 	
 	
 	//Plus sums this and addend, and returns the result
-	//Note: might not work when sum is more than 48 bits
+	//Note: overflow behaves like that of Java. If the result is larger than sizeOfSmallerNumbers, the higher overflow bits are tuncated
+	//Note: untested for sizeOfSmallerNumbers not divisible by 4
 	this.plus = function(addend){
 		
 		var x = new LongBitString(this.highBits, this.lowBits);
 		x.lowBits += addend.lowBits;
 		x.highBits +=addend.highBits;
-		
+
 		//check overflow from lowBits
-		var overflowBits = x.lowBits >>> sizeOfSmallerNumbers;
-		x.lowBits -= overflowBits << sizeOfSmallerNumbers;
+		var overflowBits = Math.floor(x.lowBits / Math.pow(2, sizeOfSmallerNumbers));
+		x.lowBits -= overflowBits  * Math.pow(2, sizeOfSmallerNumbers);
 		x.highBits +=overflowBits;
+	
+		
+		//truncate any overflow on the highBits (like in Java)
+		highBitsString = x.highBits.toString(16);
+		highBitLength = highBitsString.length;
+		highBitsString = highBitsString.substr(highBitLength-(sizeOfSmallerNumbers/4), (sizeOfSmallerNumbers/4));
+		x.highBits = parseInt(highBitsString,16);
 		
 		return x;
 	}
