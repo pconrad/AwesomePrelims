@@ -109,6 +109,7 @@ function LongBitString(highBits,lowBits) {
 }
 
 /* OriginalNumber must be less than 2*sizeOfSmallerNumbers. */
+/* Only works for numbers up to 0x1FFFFFFFFFFFFF (2^53-1), use longSplitBits for higher ones */
 function splitBits(originalNumber){
 
 	var highBits = Math.floor(originalNumber / Math.pow(2, sizeOfSmallerNumbers));
