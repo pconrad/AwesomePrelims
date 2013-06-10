@@ -1,4 +1,4 @@
-test( "bitsTest", 14, function() {	
+test( "bitsTest", 22, function() {	
 	
 	
 	//Constructor Testing:
@@ -25,5 +25,18 @@ test( "bitsTest", 14, function() {
 	equal(splitBits(0xFFFFFFFFFFFF).isEqual(new LongBitString(0xFFFF,0xFFFFFFFF)), true ,'Testing split of 0xFFFFFFFFFFFF: high bits: 0xFFFF low bits: 0xFFFFFFFF');
 	equal(splitBits(0x1FFFFFFFFFFFFF).isEqual(new LongBitString(0x1FFFFF,0xFFFFFFFF)), true ,'Testing split of 0x1FFFFFFFFFFFFF: high bits: 0x1FFFFF low bits: 0xFFFFFFFF');
 
+	//And Testing:
 
+	equal(splitBits(0x0F000000FF00).bitwiseAnd(splitBits(0x0FFF00000000)).isEqual(new LongBitString(0x0F00,0x00000000)),true,'0F000000FF00 & 0FFF00000000 => 0F00000000' );
+
+	equal(splitBits(0xFFFF00FFFF00).bitwiseAnd(splitBits(0x0FFF00000000)).isEqual(new LongBitString(0x0FFF,0x00000000)),true,'FFFFFFFF & 0FFF0000 => 0FFF0000' );
+	equal(splitBits(0xFFFF00FFFF00).bitwiseAnd(splitBits(0xFFFF00FFFF00)).isEqual(new LongBitString(0xFFFF,0x00FFFF00)),true,'FFFFFFFF & FFFFFFFF => FFFFFFFF' );
+
+	
+	equal(longSplitBits("0F000000FF00").bitwiseAnd(longSplitBits("0FFF00000000")).isEqual(new LongBitString(0x0F00,0x00000000)),true,'0F000000FF00 & 0FFF00000000 => 0F00000000' );
+	equal(longSplitBits("FFFF00FFFF00").bitwiseAnd(longSplitBits("0FFF00000000")).isEqual(new LongBitString(0x0FFF,0x00000000)),true,'FFFFFFFF & 0FFF0000 => 0FFF0000' );
+	equal(longSplitBits("FFFF00FFFF00").bitwiseAnd(longSplitBits("FFFF00FFFF00")).isEqual(new LongBitString(0xFFFF,0x00FFFF00)),true,'FFFFFFFF & FFFFFFFF => FFFFFFFF' );
+	
+	equal(longSplitBits("FFFFFFFFFFFFFFFF").bitwiseAnd(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0xFFFFFFFF,0xFFFFFFFF)),true,'FFFFFFFFFFFFFFFF & FFFFFFFFFFFFFFFF => FFFFFFFFFFFFFFFF' );
+	equal(longSplitBits("0").bitwiseAnd(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0x0,0x0)),true,'0 & FFFFFFFFFFFFFFFF => 0' );
     });
