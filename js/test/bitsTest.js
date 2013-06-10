@@ -1,4 +1,4 @@
-test( "bitsTest", 22, function() {	
+test( "bitsTest", 30, function() {	
 	
 	
 	//Constructor Testing:
@@ -27,16 +27,30 @@ test( "bitsTest", 22, function() {
 
 	//And Testing:
 
-	equal(splitBits(0x0F000000FF00).bitwiseAnd(splitBits(0x0FFF00000000)).isEqual(new LongBitString(0x0F00,0x00000000)),true,'0F000000FF00 & 0FFF00000000 => 0F00000000' );
+	equal(splitBits(0x0F000000FF00).bitwiseAnd(splitBits(0x0FFF00000000)).isEqual(new LongBitString(0x0F00,0x00000000)),true,'0x0F000000FF00 & 0x0FFF00000000 => 0x0F00000000' );
 
-	equal(splitBits(0xFFFF00FFFF00).bitwiseAnd(splitBits(0x0FFF00000000)).isEqual(new LongBitString(0x0FFF,0x00000000)),true,'FFFFFFFF & 0FFF0000 => 0FFF0000' );
-	equal(splitBits(0xFFFF00FFFF00).bitwiseAnd(splitBits(0xFFFF00FFFF00)).isEqual(new LongBitString(0xFFFF,0x00FFFF00)),true,'FFFFFFFF & FFFFFFFF => FFFFFFFF' );
+	equal(splitBits(0xFFFF00FFFF00).bitwiseAnd(splitBits(0x0FFF00000000)).isEqual(new LongBitString(0x0FFF,0x00000000)),true,'0xFFFFFFFF & 0x0FFF0000 => 0x0FFF0000' );
+	equal(splitBits(0xFFFF00FFFF00).bitwiseAnd(splitBits(0xFFFF00FFFF00)).isEqual(new LongBitString(0xFFFF,0x00FFFF00)),true,'0xFFFFFFFF & 0xFFFFFFFF => 0xFFFFFFFF' );
 
 	
-	equal(longSplitBits("0F000000FF00").bitwiseAnd(longSplitBits("0FFF00000000")).isEqual(new LongBitString(0x0F00,0x00000000)),true,'0F000000FF00 & 0FFF00000000 => 0F00000000' );
-	equal(longSplitBits("FFFF00FFFF00").bitwiseAnd(longSplitBits("0FFF00000000")).isEqual(new LongBitString(0x0FFF,0x00000000)),true,'FFFFFFFF & 0FFF0000 => 0FFF0000' );
-	equal(longSplitBits("FFFF00FFFF00").bitwiseAnd(longSplitBits("FFFF00FFFF00")).isEqual(new LongBitString(0xFFFF,0x00FFFF00)),true,'FFFFFFFF & FFFFFFFF => FFFFFFFF' );
+	equal(longSplitBits("0F000000FF00").bitwiseAnd(longSplitBits("0FFF00000000")).isEqual(new LongBitString(0x0F00,0x00000000)),true,'0x0F000000FF00 & 0x0FFF00000000 => 0x0F00000000' );
+	equal(longSplitBits("FFFF00FFFF00").bitwiseAnd(longSplitBits("0FFF00000000")).isEqual(new LongBitString(0x0FFF,0x00000000)),true,'0xFFFFFFFF & 0x0FFF0000 => 0x0FFF0000' );
+	equal(longSplitBits("FFFF00FFFF00").bitwiseAnd(longSplitBits("FFFF00FFFF00")).isEqual(new LongBitString(0xFFFF,0x00FFFF00)),true,'0xFFFFFFFF & 0xFFFFFFFF => 0xFFFFFFFF' );
 	
-	equal(longSplitBits("FFFFFFFFFFFFFFFF").bitwiseAnd(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0xFFFFFFFF,0xFFFFFFFF)),true,'FFFFFFFFFFFFFFFF & FFFFFFFFFFFFFFFF => FFFFFFFFFFFFFFFF' );
-	equal(longSplitBits("0").bitwiseAnd(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0x0,0x0)),true,'0 & FFFFFFFFFFFFFFFF => 0' );
+	equal(longSplitBits("FFFFFFFFFFFFFFFF").bitwiseAnd(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0xFFFFFFFF,0xFFFFFFFF)),true,'0xFFFFFFFFFFFFFFFF & 0xFFFFFFFFFFFFFFFF => 0xFFFFFFFFFFFFFFFF' );
+	equal(longSplitBits("0").bitwiseAnd(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0x0,0x0)),true,'0x0 & 0xFFFFFFFFFFFFFFFF => 0x0' );
+	
+	// Or Testing
+	equal(splitBits(0x0F000000FF00).bitwiseOr(splitBits(0x0FFF00000000)).isEqual(new LongBitString(0x0FFF,0x0000FF00)),true,'0x0F000000FF00 | 0x0FFF00000000 => 0x0FFF0000FF00' );
+	equal(splitBits(0x0F000000FF00).bitwiseOr(splitBits(0xFFFF00FFFF00)).isEqual(new LongBitString(0xFFFF,0x00FFFF00)),true,'0x0F0000FF | 0xFFFFFFFF => 0xFFFFFFFF' );
+	equal(splitBits(0x0FFF00000000).bitwiseOr(splitBits(0x0FFF00000000)).isEqual(new LongBitString(0x0FFF,0x00000000)),true,'0x0FFF0000 | 0x0FFF0000 => 0x0FFF0000' );
+	
+	equal(longSplitBits("0F000000FF00").bitwiseOr(longSplitBits("0FFF00000000")).isEqual(new LongBitString(0x0FFF,0x0000FF00)),true,'0x0F000000FF00 | 0x0FFF00000000 => 0x0FFF0000FF00' );
+	equal(longSplitBits("0F000000FF00").bitwiseOr(longSplitBits("FFFF00FFFF00")).isEqual(new LongBitString(0xFFFF,0x00FFFF00)),true,'0x0F0000FF | 0xFFFFFFFF => 0xFFFFFFFF' );
+	equal(longSplitBits("0FFF00000000").bitwiseOr(longSplitBits("0FFF00000000")).isEqual(new LongBitString(0x0FFF,0x00000000)),true,'0x0FFF0000 | 0x0FFF0000 => 0x0FFF0000' );
+	
+	equal(longSplitBits("FFFFFFFF00000000").bitwiseOr(longSplitBits("FFFFFFFF00000000")).isEqual(new LongBitString(0xFFFFFFFF,0x00000000)),true,'0xFFFFFFFF00000000 | 0xFFFFFFFF00000000 => 0xFFFFFFFF00000000' );
+	equal(longSplitBits("0123456789ABCDEF").bitwiseOr(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0xFFFFFFFF,0xFFFFFFFF)),true,'0x0123456789ABCDEF | 0xFFFFFFFFFFFFFFFF => 0xFFFFFFFFFFFFFFFF' );
+	
+	
     });

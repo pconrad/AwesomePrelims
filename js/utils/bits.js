@@ -55,12 +55,20 @@ function LongBitString(highBits,lowBits) {
 
     //OR implementation
     this.bitwiseOr = function(otherLongBitString) {
+    
+   		 //we have to handle the sign bits separately:
+		var signBits = new LongBitString(this.highBits >>> 31 ,this.lowBits >>>31);
+		var otherSignBits = new LongBitString(otherLongBitString.highBits >>> 31 ,otherLongBitString.lowBits >>>31);
+		var oredSignBits = new LongBitString(signBits.highBits | otherSignBits.highBits, signBits.lowBits | otherSignBits.lowBits);
 	
-	var x = new LongBitString(otherLongBitString.highBits,otherLongBitString.lowBits);
-	x.highBits |= this.highBits;
-	x.lowBits |= this.lowBits;
-	
-	return x;
+		//then we can remove the signed bits, and handle the rest of the bits
+		var nonSignBits = new LongBitString((this.highBits << 1) >>> 1 , (this.lowBits <<1) >>> 1);
+		var otherNonSignBits = new LongBitString((otherLongBitString.highBits << 1) >>> 1 , (otherLongBitString.lowBits <<1) >>> 1);
+		
+		var oredNonSignBits = new LongBitString(nonSignBits.highBits | otherNonSignBits.highBits, nonSignBits.lowBits | otherNonSignBits.lowBits);
+		
+		//now we must put these two sets of bits together:
+		return (new LongBitString(oredNonSignBits.highBits + (oredSignBits.highBits * Math.pow(2, sizeOfSmallerNumbers-1)), oredNonSignBits.lowBits + (oredSignBits.lowBits * Math.pow(2, sizeOfSmallerNumbers-1))));
     }
     
     
