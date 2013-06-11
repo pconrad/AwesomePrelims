@@ -1,4 +1,4 @@
-test( "bitsTest", 69, function() {	
+test( "bitsTest", 76, function() {	
 	
 	//Constructor Testing:
 	var longBits1 = new LongBitString(0x12345678,0x12345678);
@@ -111,5 +111,21 @@ test( "bitsTest", 69, function() {
 	equal(longSplitBits("FFFFFFFFFFFFFFFF").plus(longSplitBits("0x123456")).isEqual(new LongBitString(0x0,0x123455)), true ,'0xFFFFFFFFFFFFFFFF+0x123456=0x123455' );
 	equal(longSplitBits("FFFFFFFFFFFFFFFF").plus(longSplitBits("0x123456789ABC")).isEqual(new LongBitString(0x1234,0x56789ABB)), true ,'0xFFFFFFFFFFFFFFFF+0x12345789ABC6=0x123456789ABB' );
 	equal(longSplitBits("FFFFFFFFFFFFFFFF").plus(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0xFFFFFFFF,0xFFFFFFFE)), true ,'0xFFFFFFFFFFFFFFFF+0xFFFFFFFFFFFFFFFF=0xFFFFFFFFFFFFFFFE' );
+	
+	//Times testing:
 
+/* 	equal(splitBits(0x00000000).times(splitBits(0x0F0000FF)).isEqual(new LongBitString(0x0,0x0)), true ,'0x00000000*0x0F0000FF=0x000000000000' ); */
+/* 	equal(splitBits(0x1111111).times(splitBits(0x789ABC)).isEqual(new LongBitString(0x80A5,0x0CC4C27C)), true ,'0x1111111*0x789ABC=0x80A50CC4C27C' ); */
+	alert(splitBits(0x1111111).times(splitBits(0x789ABC)));
+/*
+	
+	equal(longSplitBits("00000000").times(longSplitBits("0F0000FF")).isEqual(new LongBitString(0x0,0x0)), true ,'0x00000000*0x0F0000FF=0x000000000000' );
+	equal(longSplitBits("1111111").times(longSplitBits("789ABC")).isEqual(new LongBitString(0x80A5,0x0CC4C27C)), true ,'0x1111111*0x789ABC=0x80A50CC4C27C' );
+
+	equal(longSplitBits("FFFFFFFFFFFFFFFF").times(longSplitBits("0")).isEqual(new LongBitString(0x0,0x0)), true ,'0xFFFFFFFFFFFFFFFF*0x0=0x0' );
+	equal(longSplitBits("FFFFFFFFFFFFFFFF").times(longSplitBits("1")).isEqual(new LongBitString(0xFFFFFFFF,0xFFFFFFFF)), true ,'0xFFFFFFFFFFFFFFFF*0x1=0xFFFFFFFFFFFFFFFF' );
+	
+	equal(longSplitBits("FFFFFFFFFFFFFFFF").times(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0x0,0x1)), true ,'0xFFFFFFFFFFFFFFFF*0xFFFFFFFFFFFFFFFF=0x1' );
+	alert(longSplitBits("FFFFFFFFFFFFFFFF").times(longSplitBits("FFFFFFFFFFFFFFFF")));
+*/
     });
