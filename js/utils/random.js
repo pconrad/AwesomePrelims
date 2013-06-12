@@ -14,6 +14,8 @@
 */
 //Random creates a new random number generator using a single LongBitString seed. The seed is the initial value of the internal state of the pseudorandom number generator which is maintained by method next(int).
 function Random(seed) {
+	
+	this.currentSeed = 0;
 
 /* 	Sets the seed of this random number generator using a single long seed. The general contract of setSeed is that it alters the state of this random number generator object so as to be in exactly the same state as if it had just been created with the argument seed as a seed. The method setSeed is implemented by class Random by atomically updating the seed*/
 	this.setSeed = function(seed) {
