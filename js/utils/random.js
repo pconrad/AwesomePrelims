@@ -29,7 +29,9 @@ function Random(seed) {
 
 /* This is a linear congruential pseudorandom number generator, as defined by D. H. Lehmer and described by Donald E. Knuth in The Art of Computer Programming, Volume 3: Seminumerical Algorithms, section 3.2.1. */
     this.next = function(bits) {
-    	this.currentSeed = ((this.currentSeed.times(splitBits(0x5DEECE66D))).plus(splitBits(0xB))).bitwiseAnd(splitBits(0xffffffffffff));
+    	this.currentSeed = this.currentSeed.times(splitBits(0x5DEECE66D));
+    	this.currentSeed = this.currentSeed.plus(splitBits(0xB));
+    	this.currentSeed = this.currentSeed.bitwiseAnd(splitBits(0xffffffffffff));
     	if ((48-bits)<32){
 	    	return this.currentSeed.rightShift(48-bits);
     	}

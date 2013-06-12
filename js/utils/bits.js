@@ -111,20 +111,21 @@ function LongBitString(highBits,lowBits) {
 		
 		var x = new LongBitString(this.highBits, this.lowBits);
 		x.lowBits += addend.lowBits;
-		x.highBits +=addend.highBits;
+		x.highBits += addend.highBits;
 
 		//check overflow from lowBits
 		var overflowBits = Math.floor(x.lowBits / Math.pow(2, sizeOfSmallerNumbers));
 		x.lowBits -= overflowBits * Math.pow(2, sizeOfSmallerNumbers);
 		x.highBits +=overflowBits;
-	
 		
 		//truncate any overflow on the highBits (like in Java)
-		highBitsString = x.highBits.toString(16);
-		highBitLength = highBitsString.length;
-		highBitsString = highBitsString.substr(highBitLength-(sizeOfSmallerNumbers/4), (sizeOfSmallerNumbers/4));
-		x.highBits = parseInt(highBitsString,16);
-		
+		 if (x.highBits >= Math.pow(2,32)){ //overflow check
+	
+			var currentOverflow = Math.floor(x.highBits / Math.pow(2,32)) * Math.pow(2,32); 
+			x.highBits -= currentOverflow;
+		}
+
+				
 		return x;
 	}
 	
@@ -152,10 +153,12 @@ function LongBitString(highBits,lowBits) {
 	
 	product.lowBits = numberD*numberH; //last of the FOIL product, max number of bits is 32
 	//penultimate of the FOIL product, max number of bits is 49. we must split 16 of the lower bits into the lowBits
-	currentProduct = (numberD * numberG) + (numberC * numberH); //this is at maximum 33 bits on its own, plus 16 = 49
+	var currentProduct = (numberD * numberG) + (numberC * numberH); //this is at maximum 33 bits on its own, plus 16 = 49
+	
+	var currentOverflow;
 	
 	if (currentProduct >= Math.pow(2,16)){
-		numForHigherBits = Math.floor (currentProduct / Math.pow(2, 16)) * Math.pow(2, 16);
+		var numForHigherBits = Math.floor (currentProduct / Math.pow(2, 16)) * Math.pow(2, 16);
 
 		product.lowBits += (currentProduct - numForHigherBits) * Math.pow(2, 16);
 		//have to check for overflow after each addition:
@@ -224,8 +227,8 @@ function longSplitBits(originalNumberAsString){
 
 	if (stringLength > (sizeOfSmallerNumbers/4)){
 		
-		newHighBits = originalNumberAsString.substring(0, stringLength-(sizeOfSmallerNumbers/4));
-		newLowBits = originalNumberAsString.substr(stringLength-(sizeOfSmallerNumbers/4), (sizeOfSmallerNumbers/4));
+		var newHighBits = originalNumberAsString.substring(0, stringLength-(sizeOfSmallerNumbers/4));
+		var newLowBits = originalNumberAsString.substr(stringLength-(sizeOfSmallerNumbers/4), (sizeOfSmallerNumbers/4));
 		return (new LongBitString(parseInt(newHighBits,16),parseInt(newLowBits,16)));
 		}
 	
