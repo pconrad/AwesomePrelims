@@ -1,7 +1,8 @@
 /* for quick java testing: http://rextester.com/OMOGXL21081 */
 
-test("testRandom",4,function() {
+test("testRandom",8,function() {
 
+//Constructor and setSeed testing:
 var r = new Random(new LongBitString(0x1234,0x56789ABC));
 equal(new LongBitString(0x1231,0x88947cd1).isEqual(r.currentSeed),true,'testing RNG constructor (which calls setSeed) with intial seed value 0x123456789ABC'); 
 
@@ -15,6 +16,18 @@ var u = new Random(new LongBitString(0xFFFFFFFF,0xFFFFFFFF));
 equal(new LongBitString(0xfffa,0x21131992).isEqual(u.currentSeed),true,'testing RNG constructor (which calls setSeed) with intial seed value 0xFFFFFFFFFFFFFFFF'); 
 
 
+//next testing on 32 bits:
+r.next(32);
+equal(new LongBitString(0x5d01,0xde08eb08).isEqual(r.currentSeed),true,'testing one step of next (32 bits) with intial seed value 0x123456789ABC'); 
+
+s.next(32);
+equal(new LongBitString(0xbb1a,0xd5732407).isEqual(s.currentSeed),true,'testing one step of next (32 bits) with intial seed value 0x1'); 
+
+t.next(32);
+equal(new LongBitString(0xbb20,0xb4600a74).isEqual(t.currentSeed),true,'testing one step of next (32 bits) with intial seed value 0x0'); 
+
+u.next(32);
+equal(new LongBitString(0x44d9,0x6cb30f35).isEqual(u.currentSeed),true,'testing one step of next (32 bits) with intial seed value 0xFFFFFFFFFFFFFFFF'); 
 
 
 /* alert(r.currentSeed); */

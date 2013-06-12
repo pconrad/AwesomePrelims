@@ -15,7 +15,7 @@
 //Random creates a new random number generator using a single LongBitString seed. The seed is the initial value of the internal state of the pseudorandom number generator which is maintained by method next(int).
 function Random(seed) {
 	
-	this.currentSeed = 0;
+	this.currentSeed = 0; //initial value, but will be set upon constructor call with setSeed
 
 /* 	Sets the seed of this random number generator using a single long seed. The general contract of setSeed is that it alters the state of this random number generator object so as to be in exactly the same state as if it had just been created with the argument seed as a seed. The method setSeed is implemented by class Random by atomically updating the seed*/
 	this.setSeed = function(seed) {
@@ -29,7 +29,9 @@ function Random(seed) {
 
 /* This is a linear congruential pseudorandom number generator, as defined by D. H. Lehmer and described by Donald E. Knuth in The Art of Computer Programming, Volume 3: Seminumerical Algorithms, section 3.2.1. */
     this.next = function(bits) {
-    	this.currentSeed = (this.currentSeed.times(splitBits(0x5DEECE66D)).plus(splitBits(0xB))).bitwiseAnd(splitBits(0xffffffffffff));
+    	this.currentSeed = ((this.currentSeed.times(splitBits(0x5DEECE66D))).plus(splitBits(0xB))).bitwiseAnd(splitBits(0xffffffffffff));
+    	/*
+this.currentSeed = (this.currentSeed.times(splitBits(0x5DEECE66D)).plus(splitBits(0xB))).bitwiseAnd(splitBits(0xffffffffffff));
     	if ((48-bits)<32){
 	    	return this.currentSeed.rightShift(48-bits);
     	}
