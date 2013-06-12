@@ -163,10 +163,10 @@ function LongBitString(highBits,lowBits) {
 	
 	product.lowBits = numberD*numberH; //last of the FOIL product, max number of bits is 32
 /* 	alert("adding DH to low bits: "+product.lowBits); */
-/* 	alert(product.lowBits); */
+/*  	alert(product.lowBits); */
 	//penultimate of the FOIL product, max number of bits is 49. we must split 16 of the lower bits into the lowBits
 	currentProduct = (numberD * numberG) + (numberC * numberH); //this is at maximum 33 bits on its own, plus 16 = 49
-/* 	alert("ch+dg: "+currentProduct);  */
+/*  	alert("ch+dg: "+currentProduct);   */
 /*
 	alert("D: "+numberD);
 	alert("G: "+numberG);
@@ -174,20 +174,27 @@ function LongBitString(highBits,lowBits) {
 	alert("plus CH:"+(numberC * numberH));
 */
 	if (currentProduct >= Math.pow(2,16)){
-/* 		alert("in first if"); */
+/*  		alert("in first if");  */
 		numForHigherBits = Math.floor (currentProduct / Math.pow(2, 16)) * Math.pow(2, 16);
-/*  		alert("adding the following to low bits: "+((currentProduct - numForHigherBits) << 16));  */
+/* 		alert("numForHigherBits: "+ (Math.floor (currentProduct / Math.pow(2, 16)) * Math.pow(2, 16)));  */
+/* 		alert("adding to lowBits: "+(currentProduct - numForHigherBits) * Math.pow(2, 16)); */
 		product.lowBits += (currentProduct - numForHigherBits) * Math.pow(2, 16);
 		//have to check for overflow after each addition:
 		if (product.lowBits > Math.pow(2,32)){
+			/* alert("overflow: "+(Math.floor(product.lowBits / Math.pow(2,32)))); */
 			currentOverflow = Math.floor(product.lowBits / Math.pow(2,32)) ; 
 			product.lowBits -= currentOverflow * Math.pow(2,32);
+		/* 	alert(product.lowBits); */
+		/* alert("adding to high: "+currentOverflow); */
 			product.highBits += currentOverflow;
+/* 			alert(product.highBits); */
 		}
-/* 		alert("adding the following to high bits: "+(numForHigherBits >>> 16)); */
-		product.highBits += (numForHigherBits >>>16);
+/*  		alert("adding the following to high bits: "+(numForHigherBits / Math.pow(2,16)));  */
+		product.highBits += (numForHigherBits / Math.pow(2,16));
+/* 		alert(product.highBits); */
 		//have to check for overflow after each addition:
 		if (product.highBits > Math.pow(2,32)){
+/* 			alert("true"); */
 			currentOverflow = Math.floor(product.highBits / Math.pow(2,32)) ; 
 			product.highBits -= currentOverflow * Math.pow(2,32);
 		}
@@ -205,53 +212,71 @@ function LongBitString(highBits,lowBits) {
 /* 	alert("high"+product.highBits); */
 	//third to last of the FOIL can only affect the upper 32 bits of the solution:
 	currentProduct = (numberD * numberF) + (numberC * numberG) + (numberB * numberH); 
-/* 	alert(currentProduct); */
+/*  	alert(currentProduct);  */
 	//third to last of the FOIL, so we have to check for overflow */
-	if (currentProduct >= Math.pow(2,32)){
-/* 		alert("true"); */
-		currentOverflow = Math.floor(currentProduct / Math.pow(2,32)) * Math.pow(2,32); 
-		product.highBits += currentProduct - currentOverflow;
+	product.highBits += currentProduct;
+/* 	alert(product.highBits); */
+	if (product.highBits >= Math.pow(2,32)){ //overflow check
+/*  		alert("true");  */
+/* 		alert(Math.floor(product.highBits / Math.pow(2,32)) * Math.pow(2,32)); */
+		currentOverflow = Math.floor(product.highBits / Math.pow(2,32)) * Math.pow(2,32); 
+		product.highBits -= currentOverflow;
+/* 		alert(product.highBits); */
 	}
+/*
 	else{
 /*
 		alert("false");
 		alert("new high"+product.highBits);
-*/
 		product.highBits += currentProduct;
 		//have to check for overflow after each addition:
 		if (product.highBits >= Math.pow(2,32)){
 			currentOverflow = Math.floor(product.highBits / Math.pow(2,32)) ; 
 			product.highBits -= currentOverflow * Math.pow(2,32);
 			}
+
 	}
+	*/
 /* 	alert("new high"+product.highBits); */
-	alert("highBits before: "+product.highBits);
+/* 	alert("highBits before: "+product.highBits); */
 	//last part of the FOIL can only affect the upper 16 bits of the solution:
 	currentProduct = (numberE * numberD) + (numberC * numberF) + (numberB * numberG) + (numberA * numberH);
-/* 	alert("current product "+currentProduct); */
-/* 	alert("old high bits "+product.highBits); */
+/* 	alert("current product "+currentProduct);  */
+/* 	alert("adding " + (currentProduct * Math.pow(2,16)) ); */
+    product.highBits += currentProduct * Math.pow(2,16);
+    if (product.highBits >= Math.pow(2,32)){ //overflow check
+/*  		alert("true");  */
+/* 		alert(Math.floor(product.highBits / Math.pow(2,32)) * Math.pow(2,32)); */
+		currentOverflow = Math.floor(product.highBits / Math.pow(2,32)) * Math.pow(2,32); 
+		product.highBits -= currentOverflow;
+/* 		alert(product.highBits); */
+	}
+
+/* 	alert(product.highBits); */
+	
+/*
 	if (currentProduct >= Math.pow(2,16)){ //STUFF IN THIS IF BLOCK IS WRONG! DOUBLE CHECK THE MATH
-/*  		alert("true");   */
-/* 		alert("currentProd: "+currentProduct); */
+
 		currentOverflow = Math.floor(currentProduct / Math.pow(2,16)) * Math.pow(2,16); 
-	/*
+
 	alert("currentOverflow: "+currentOverflow);
 		alert("adding this: "+(currentProduct - currentOverflow) * Math.pow(2, 16));
-*/
+
 		product.highBits += (currentProduct - currentOverflow * Math.pow(2, 16)) ; //or should this be pow (2,16)
 		//have to check for overflow after each addition:
 		if (product.highBits >= Math.pow(2,32)){
-/*
+
 			alert("true");
 			alert("product highBits: "+product.highBits);
-*/
+
 			currentOverflow = Math.floor(product.highBits / Math.pow(2,32)) ; 
-/* 			alert("overflow: "+Math.floor(product.highBits / Math.pow(2,32))); */
+ 			alert("overflow: "+Math.floor(product.highBits / Math.pow(2,32)));
 			product.highBits -= currentOverflow * Math.pow(2,32);
 			}
+
 	}
 	else{
-/*  		alert("false");  */
+
 		product.highBits += currentProduct * Math.pow(2, 16);
 		//have to check for overflow after each addition:
 		if (product.highBits >= Math.pow(2,32)){
@@ -259,8 +284,9 @@ function LongBitString(highBits,lowBits) {
 			product.highBits -= currentOverflow * Math.pow(2,32);
 			}
 	}
+*/
 /* 	alert("new high bits "+product.highBits); */
-	alert("high bits: "+product.highBits+" low bits: "+product.lowBits);
+/* 	alert("high bits: "+product.highBits+" low bits: "+product.lowBits); */
 	return product;
 	
 	/*

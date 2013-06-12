@@ -1,4 +1,4 @@
-test( "bitsTest", 76, function() {	
+test( "bitsTest", 77, function() {	
 	
 	//Constructor Testing:
 	var longBits1 = new LongBitString(0x12345678,0x12345678);
@@ -115,7 +115,6 @@ test( "bitsTest", 76, function() {
 	//Times testing:
 
 
-/*
      equal(splitBits(0x00000000).times(splitBits(0x0F0000FF)).isEqual(new LongBitString(0x0,0x0)), true ,'0x00000000*0x0F0000FF=0x000000000000' );  
 	equal(splitBits(0x1111111).times(splitBits(0x789ABC)).isEqual(new LongBitString(0x80A5,0x0CC4C27C)), true ,'0x1111111*0x789ABC=0x80A50CC4C27C' ); 
 	
@@ -126,6 +125,8 @@ test( "bitsTest", 76, function() {
 
 
 	equal(longSplitBits("FFFFFFFFFFFFFFFF").times(longSplitBits("1")).isEqual(new LongBitString(0xFFFFFFFF,0xFFFFFFFF)), true ,'0xFFFFFFFFFFFFFFFF*0x1=0xFFFFFFFFFFFFFFFF' );
-*/
  	equal(longSplitBits("FFFFFFFFFFFFFFFF").times(longSplitBits("FFFFFFFFFFFFFFFF")).isEqual(new LongBitString(0x0,0x1)), true ,'0xFFFFFFFFFFFFFFFF*0xFFFFFFFFFFFFFFFF=0x1' );  
+ 	
+ 	 	equal(longSplitBits("1234567890ABCDEF").times(longSplitBits("1234567890ABCDEF")).isEqual(new LongBitString(0xA6475F09,0xA2F2A521)), true ,'0x1234567890ABCDEF*0x1234567890ABCDEF=0xA6475F09A2F2A521' );  
+ 	
     });
