@@ -42,6 +42,23 @@ function Random(seed) {
 	    return this.next(32).combineBits();
     }
     
+/* Returns a pseudorandom, uniformly distributed int value between 0 (inclusive) and the specified value (exclusive), drawn from this random number generator's sequence. The general contract of nextInt is that one int value in the specified range is pseudorandomly generated and returned. All n possible int values are produced with (approximately) equal probability. */
+    this.nextIntRange = function (n) {
+    	if (n <= 0)
+    		return null;
+    
+    	var logBase2 = Math.log(n) / Math.log(2);
+	    if (Math.floor(logBase2) == logBase2)
+		    return ((splitBits(n).times(this.next(31))).rightShift(31).combineBits());
+	    
+	    var bits, val;
+	    do {
+		    bits = this.next(31).combineBits();
+		    val = bits % n;
+	    } while (bits - val + (n-1) < 0);
+	    return val;
+    }
+    
 }
 
 

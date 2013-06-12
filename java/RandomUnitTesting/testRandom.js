@@ -1,6 +1,6 @@
 /* for quick java testing: http://rextester.com/PEHB61236 */
 
-test("testRandom",28,function() {
+test("testRandom",36,function() {
 
 //Constructor and setSeed testing:
 var r = new Random(0x123456789ABC);
@@ -70,5 +70,29 @@ strictEqual(0x684df992, s.nextInt(), 'testing return value after two steps of ne
 strictEqual(0x9b3970be, t.nextInt(), 'testing return value after two steps of nextInt with intial seed value 0x0');
 
 strictEqual(0x8c4bff9e, u.nextInt(), 'testing return value after two steps of nextInt with intial seed value 0xFFFFFFFFFFFFFFFF');
+
+
+//nextIntRange testing:
+
+//first call
+strictEqual(1, r.nextIntRange(2), 'testing return value after one step of nextIntRange(2) with intial seed value 0x123456789ABC');
+
+strictEqual(54, s.nextIntRange(100), 'testing return value after one step of nextIntRange(100) with intial seed value 0x1');
+
+strictEqual(163, t.nextIntRange(256), 'testing return value after one step of nextIntRange(256) with intial seed value 0x0');
+
+strictEqual(4, u.nextIntRange(5), 'testing return value after one step of nextIntRange(5) with intial seed value 0xFFFFFFFFFFFFFFFF');
+
+
+
+//second call
+strictEqual(0, r.nextIntRange(2), 'testing return value after two steps of nextIntRange(2) with intial seed value 0x123456789ABC');
+
+strictEqual(4, s.nextIntRange(100), 'testing return value after two steps of nextIntRange(100) with intial seed value 0x1');
+
+strictEqual(79, t.nextIntRange(256), 'testing return value after two steps of nextIntRange(256) with intial seed value 0x0');
+
+strictEqual(3, u.nextIntRange(5), 'testing return value after two steps of nextIntRange(5) with intial seed value 0xFFFFFFFFFFFFFFFF');
+
 
 });
