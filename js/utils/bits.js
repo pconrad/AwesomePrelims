@@ -33,6 +33,18 @@ function LongBitString(highBits,lowBits) {
     this.isEqual = function(correctLongBitString){
 	    return (this.highBits===correctLongBitString.highBits && this.lowBits===correctLongBitString.lowBits);
 	    }
+	
+	//combineBits merges the two highBits and lowBits into one JS integer (NOTE: this should only be called on numbers of 53 bits or less bits!!!)  
+	this.combineBits = function(){
+		if (this.highBits > Math.pow(2, 53-32)){
+			return null;
+		}
+		else {
+		var actualHighBits = (this.highBits * Math.pow(2, 32));
+/* 		alert(actualHighBits); */
+		return (this.lowBits + actualHighBits);
+		}
+	}
        
     //AND implementation   
     this.bitwiseAnd = function (otherLongBitString) {

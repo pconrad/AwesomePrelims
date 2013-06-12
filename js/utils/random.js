@@ -39,7 +39,16 @@ function Random(seed) {
     		return null; //this shouldn't happen*/
     }
     
+   /*  Returns the next pseudorandom, uniformly distributed int value from this random number generator's sequence. The general contract of nextInt is that one int value is pseudorandomly generated and returned. All 232 possible int values are produced with (approximately) equal probability. */
+    this.nextInt = function (){ //essentially just calls next with 32 bits
+	    return this.next(32);
+    }
+    
 }
+
+
+
+//From previous code (Emilie did not edit past here):
 
 /** Method to select either a random element or a new array with a random number of elements from an array.
  *  If count is not present, a single random element will be returned.

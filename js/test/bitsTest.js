@@ -1,4 +1,4 @@
-test( "bitsTest", 77, function() {	
+test( "bitsTest", 80, function() {	
 	
 	//Constructor Testing:
 	var longBits1 = new LongBitString(0x12345678,0x12345678);
@@ -115,7 +115,7 @@ test( "bitsTest", 77, function() {
 	//Times testing:
 
 
-     equal(splitBits(0x00000000).times(splitBits(0x0F0000FF)).isEqual(new LongBitString(0x0,0x0)), true ,'0x00000000*0x0F0000FF=0x000000000000' );  
+    equal(splitBits(0x00000000).times(splitBits(0x0F0000FF)).isEqual(new LongBitString(0x0,0x0)), true ,'0x00000000*0x0F0000FF=0x000000000000' );  
 	equal(splitBits(0x1111111).times(splitBits(0x789ABC)).isEqual(new LongBitString(0x80A5,0x0CC4C27C)), true ,'0x1111111*0x789ABC=0x80A50CC4C27C' ); 
 	
 	equal(longSplitBits("00000000").times(longSplitBits("0F0000FF")).isEqual(new LongBitString(0x0,0x0)), true ,'0x00000000*0x0F0000FF=0x000000000000' );
@@ -129,4 +129,10 @@ test( "bitsTest", 77, function() {
  	
  	 	equal(longSplitBits("1234567890ABCDEF").times(longSplitBits("1234567890ABCDEF")).isEqual(new LongBitString(0xA6475F09,0xA2F2A521)), true ,'0x1234567890ABCDEF*0x1234567890ABCDEF=0xA6475F09A2F2A521' );  
  	
+ 	
+ 	//CombineBits Testing:
+ 	strictEqual(splitBits(0x00000000).combineBits(), 0x00000000 ,'testing combineBits with 0x00000000');
+ 	strictEqual(splitBits(0x1111111).combineBits(), 0x1111111, 'testing combineBits with 0x1111111' );  
+ 	strictEqual(splitBits(0x1FFFFFFFFFFFFF).combineBits(), 0x1FFFFFFFFFFFFF, 'testing combineBits with 0x1FFFFFFFFFFFFF' );  
+
     });
