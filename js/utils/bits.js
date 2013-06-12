@@ -5,11 +5,11 @@
   It can handle unsigned numbers that are up to 62 bits. If we used all possible 64/2=32 bits, the leading sign bit would cause us problems (hence we use 32-1=31 bits maximum).
 
   
-  By default, it will split a 48 bit number into two, 24 bit numbers.   
+  By default, it will split a 64 bit number into two, 32 bit numbers.   
   
-  The number 24 can be changed, if desired. To do so, change the value of sizeOfSmallerNumbers. This would change the size of the two numbers we use to store the upper and lower bits of the original, larger number. Note that if you want to store a number of size x, the size of the two smaller numbers must be at least  the ceiling of x/2. If this number is changed, it must be less than 32 (and thus the greatest number we can store is 31*2=62). Otherwise, unwanted behavior may occur.
-
-  Note also that since javascript uses IEEE floating point notation, the largest whole number that can be stored is only 53 bits. If you used this library for numbers larger than 53 bits, you are entering uncharted waters.
+  The number 32 can be changed, if desired. To do so, change the value of sizeOfSmallerNumbers. This would change the size of the two numbers we use to store the upper and lower bits of the original, larger number. Note that if you want to store a number of size x, the size of the two smaller numbers must be at least  the ceiling of x/2. If this number is changed, it must be less than 32 (and thus the greatest number we can store is 31*2=62). Otherwise, unwanted behavior may occur.
+  
+  NOTE: This has only been tested with 2, 32 bit numbers. The addition and multiplication function probably won't work without a few edits for it to work with other numbers.
 */
 
 /* sizeOfSmallerNumbers can be changed. If it's changed to a number >31 or <16, undesired results may occur. */
