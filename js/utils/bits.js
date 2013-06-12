@@ -12,7 +12,7 @@
   NOTE: This has only been tested with 2, 32 bit numbers. The addition and multiplication function probably won't work without a few edits for it to work with other numbers.
 */
 
-/* sizeOfSmallerNumbers can be changed. If it's changed to a number >31 or <16, undesired results may occur. */
+/* sizeOfSmallerNumbers can be changed, though undesired results may occur. */
 sizeOfSmallerNumbers = 32;
 
 /* LongBitsString is our object that has the two smaller numbers that together represent the larger number. With these two components we are able to perform the bitwise and shift operations. */
@@ -37,11 +37,10 @@ function LongBitString(highBits,lowBits) {
 	//combineBits merges the two highBits and lowBits into one JS integer (NOTE: this should only be called on numbers of 53 bits or less bits!!!)  
 	this.combineBits = function(){
 		if (this.highBits > Math.pow(2, 53-32)){
-			return null;
+			return null; //if this happens, it's because JS can't actually store the number you want
 		}
 		else {
 		var actualHighBits = (this.highBits * Math.pow(2, 32));
-/* 		alert(actualHighBits); */
 		return (this.lowBits + actualHighBits);
 		}
 	}

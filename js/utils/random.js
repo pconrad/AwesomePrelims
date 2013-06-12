@@ -9,9 +9,10 @@
   
   Provide a stream of random numbers that is seeded and repeatable,
   with a contract similar to that of the Random object in Java SE 7
-  Implementing everyting from JavaDoc except for nextByte
 
 */
+
+
 //Random creates a new random number generator using a single LongBitString seed. The seed is the initial value of the internal state of the pseudorandom number generator which is maintained by method next(int).
 function Random(seed) {
 	
