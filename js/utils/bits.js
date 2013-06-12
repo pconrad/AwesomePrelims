@@ -147,60 +147,32 @@ function LongBitString(highBits,lowBits) {
 	var numberF = multiplier.highBits - (numberE * Math.pow(2, 16));
 	var numberG = Math.floor(multiplier.lowBits / Math.pow(2, 16));
 	var numberH = multiplier.lowBits - (numberG * Math.pow(2, 16));
-
-/*
-	alert(numberA);
-	alert(numberB);
-	alert(numberC);
-	alert(numberD);
-	alert(numberE);
-	alert(numberF);
-	alert(numberG);
-	alert(numberH);
-*/
 	
 	var product = new LongBitString(0,0);
 	
 	product.lowBits = numberD*numberH; //last of the FOIL product, max number of bits is 32
-/* 	alert("adding DH to low bits: "+product.lowBits); */
-/*  	alert(product.lowBits); */
 	//penultimate of the FOIL product, max number of bits is 49. we must split 16 of the lower bits into the lowBits
 	currentProduct = (numberD * numberG) + (numberC * numberH); //this is at maximum 33 bits on its own, plus 16 = 49
-/*  	alert("ch+dg: "+currentProduct);   */
-/*
-	alert("D: "+numberD);
-	alert("G: "+numberG);
-	alert("current product is DG"+(numberD * numberG));
-	alert("plus CH:"+(numberC * numberH));
-*/
+	
 	if (currentProduct >= Math.pow(2,16)){
-/*  		alert("in first if");  */
 		numForHigherBits = Math.floor (currentProduct / Math.pow(2, 16)) * Math.pow(2, 16);
-/* 		alert("numForHigherBits: "+ (Math.floor (currentProduct / Math.pow(2, 16)) * Math.pow(2, 16)));  */
-/* 		alert("adding to lowBits: "+(currentProduct - numForHigherBits) * Math.pow(2, 16)); */
+
 		product.lowBits += (currentProduct - numForHigherBits) * Math.pow(2, 16);
 		//have to check for overflow after each addition:
 		if (product.lowBits > Math.pow(2,32)){
-			/* alert("overflow: "+(Math.floor(product.lowBits / Math.pow(2,32)))); */
+		
 			currentOverflow = Math.floor(product.lowBits / Math.pow(2,32)) ; 
 			product.lowBits -= currentOverflow * Math.pow(2,32);
-		/* 	alert(product.lowBits); */
-		/* alert("adding to high: "+currentOverflow); */
 			product.highBits += currentOverflow;
-/* 			alert(product.highBits); */
 		}
-/*  		alert("adding the following to high bits: "+(numForHigherBits / Math.pow(2,16)));  */
 		product.highBits += (numForHigherBits / Math.pow(2,16));
-/* 		alert(product.highBits); */
 		//have to check for overflow after each addition:
 		if (product.highBits > Math.pow(2,32)){
-/* 			alert("true"); */
 			currentOverflow = Math.floor(product.highBits / Math.pow(2,32)) ; 
 			product.highBits -= currentOverflow * Math.pow(2,32);
 		}
 	}
 	else {
-/* 		alert("adding this to the lower bits: "+(currentProduct * Math.pow(2,16))); */
 		product.lowBits += (currentProduct * Math.pow(2,16));
 		//have to check for overflow after each addition:
 		if (product.lowBits > Math.pow(2,32)){
@@ -209,140 +181,27 @@ function LongBitString(highBits,lowBits) {
 			product.highBits += currentOverflow;
 		}
 	}
-/* 	alert("high"+product.highBits); */
 	//third to last of the FOIL can only affect the upper 32 bits of the solution:
 	currentProduct = (numberD * numberF) + (numberC * numberG) + (numberB * numberH); 
-/*  	alert(currentProduct);  */
+
 	//third to last of the FOIL, so we have to check for overflow */
 	product.highBits += currentProduct;
-/* 	alert(product.highBits); */
+
 	if (product.highBits >= Math.pow(2,32)){ //overflow check
-/*  		alert("true");  */
-/* 		alert(Math.floor(product.highBits / Math.pow(2,32)) * Math.pow(2,32)); */
 		currentOverflow = Math.floor(product.highBits / Math.pow(2,32)) * Math.pow(2,32); 
 		product.highBits -= currentOverflow;
-/* 		alert(product.highBits); */
 	}
-/*
-	else{
-/*
-		alert("false");
-		alert("new high"+product.highBits);
-		product.highBits += currentProduct;
-		//have to check for overflow after each addition:
-		if (product.highBits >= Math.pow(2,32)){
-			currentOverflow = Math.floor(product.highBits / Math.pow(2,32)) ; 
-			product.highBits -= currentOverflow * Math.pow(2,32);
-			}
 
-	}
-	*/
-/* 	alert("new high"+product.highBits); */
-/* 	alert("highBits before: "+product.highBits); */
-	//last part of the FOIL can only affect the upper 16 bits of the solution:
 	currentProduct = (numberE * numberD) + (numberC * numberF) + (numberB * numberG) + (numberA * numberH);
-/* 	alert("current product "+currentProduct);  */
-/* 	alert("adding " + (currentProduct * Math.pow(2,16)) ); */
     product.highBits += currentProduct * Math.pow(2,16);
     if (product.highBits >= Math.pow(2,32)){ //overflow check
-/*  		alert("true");  */
-/* 		alert(Math.floor(product.highBits / Math.pow(2,32)) * Math.pow(2,32)); */
+
 		currentOverflow = Math.floor(product.highBits / Math.pow(2,32)) * Math.pow(2,32); 
 		product.highBits -= currentOverflow;
-/* 		alert(product.highBits); */
 	}
 
-/* 	alert(product.highBits); */
-	
-/*
-	if (currentProduct >= Math.pow(2,16)){ //STUFF IN THIS IF BLOCK IS WRONG! DOUBLE CHECK THE MATH
-
-		currentOverflow = Math.floor(currentProduct / Math.pow(2,16)) * Math.pow(2,16); 
-
-	alert("currentOverflow: "+currentOverflow);
-		alert("adding this: "+(currentProduct - currentOverflow) * Math.pow(2, 16));
-
-		product.highBits += (currentProduct - currentOverflow * Math.pow(2, 16)) ; //or should this be pow (2,16)
-		//have to check for overflow after each addition:
-		if (product.highBits >= Math.pow(2,32)){
-
-			alert("true");
-			alert("product highBits: "+product.highBits);
-
-			currentOverflow = Math.floor(product.highBits / Math.pow(2,32)) ; 
- 			alert("overflow: "+Math.floor(product.highBits / Math.pow(2,32)));
-			product.highBits -= currentOverflow * Math.pow(2,32);
-			}
-
-	}
-	else{
-
-		product.highBits += currentProduct * Math.pow(2, 16);
-		//have to check for overflow after each addition:
-		if (product.highBits >= Math.pow(2,32)){
-			currentOverflow = Math.floor(product.highBits / Math.pow(2,32)) ; 
-			product.highBits -= currentOverflow * Math.pow(2,32);
-			}
-	}
-*/
-/* 	alert("new high bits "+product.highBits); */
-/* 	alert("high bits: "+product.highBits+" low bits: "+product.lowBits); */
 	return product;
-	
-	/*
-	productLowBits = this.lowBits*multiplier.lowBits;
-		productHighBits = (this.highBits*multiplier.lowBits)+(this.lowBits*multiplier.highBits);
-		alert(productLowBits);
-		//Now we have to move any overflow from the low bits to the high bits:
-		var overflowBits = Math.floor(productLowBits / Math.pow(2, sizeOfSmallerNumbers));
-		productLowBits -= overflowBits * Math.pow(2, sizeOfSmallerNumbers);
-		productHighBits +=overflowBits;
-		
-		
-		//truncate any overflow on the highBits (like in Java)
-		highBitsString = productHighBits.toString(16);
-		highBitLength = highBitsString.length;
-		highBitsString = highBitsString.substr(highBitLength-(sizeOfSmallerNumbers/4), (sizeOfSmallerNumbers/4));
-		productHighBits = parseInt(highBitsString,16);
-		
-		return (new LongBitString(productHighBits,productLowBits));
-*/
-
-		//we will do this bit by bit so we know when to stop due to overflow:
-/*
-		thisString = this.highBits.toString(2) + this.lowBits.toString(2);
-		multiplierString = multiplier.highBits.toString(2) + multiplier.lowBits.toString(2);
-		
-		numberOverflow = false;
-		factor = 10;
-		oldProduct = 0;
-		product = 0;
-		
-		while (multiplierString!=0 && !numberOverflow){
-			
-			thisNumber = parseInt(thisString,2);
-			multiplierNumber = parseInt(multiplierString,2);
-			currentDigit = multiplierNumber % 10;
-			
-			if (currentDigit == 1){
-				
-				thisNumber = thisNumber * factor;
-				oldProduct=product;
-				product = binaryPlus(thisNumber, product);
-			}
-			else{
-				
-				thisNumber *= 10;
-			}
-			if (product > Math.pow(2, 64)){
-				
-				numberOverflow = true;
-				product = oldProduct;                                                                 
-			}
-			*/
-
-			
-		}
+	}
 }
 
 
