@@ -3,16 +3,16 @@
 test("testRandom",28,function() {
 
 //Constructor and setSeed testing:
-var r = new Random(new LongBitString(0x1234,0x56789ABC));
+var r = new Random(0x123456789ABC);
 equal(new LongBitString(0x1231,0x88947cd1).isEqual(r.currentSeed),true,'testing RNG constructor (which calls setSeed) with intial seed value 0x123456789ABC'); 
 
-var s = new Random(new LongBitString(0x0,0x1));
+var s = new Random(0x1);
 equal(new LongBitString(0x5,0xdeece66c).isEqual(s.currentSeed),true,'testing RNG constructor (which calls setSeed) with intial seed value 0x1'); 
 
-var t = new Random(new LongBitString(0x0,0x0));
+var t = new Random(0x0);
 equal(new LongBitString(0x5,0xdeece66d).isEqual(t.currentSeed),true,'testing RNG constructor (which calls setSeed) with intial seed value 0x0'); 
 
-var u = new Random(new LongBitString(0xFFFFFFFF,0xFFFFFFFF));
+var u = new Random(0xFFFFFFFFFFFFF);
 equal(new LongBitString(0xfffa,0x21131992).isEqual(u.currentSeed),true,'testing RNG constructor (which calls setSeed) with intial seed value 0xFFFFFFFFFFFFFFFF'); 
 
 
@@ -52,23 +52,23 @@ equal(new LongBitString(0x7087,0x22c3179c).isEqual(u.currentSeed),true,'internal
 //nextInt testing:
 
 //first call
-equal(new LongBitString(0x0,0xfa4ac204).isEqual(r.nextInt()),true,'testing return value after one step of nextInt with intial seed value 0x123456789ABC');
+strictEqual(0xfa4ac204, r.nextInt(), 'testing return value after one step of nextInt with intial seed value 0x123456789ABC');
 
-equal(new LongBitString(0x0,0x68fb0e6f).isEqual(s.nextInt()),true,'testing return value after one step of nextInt with intial seed value 0x1');
+strictEqual(0x68fb0e6f, s.nextInt(), 'testing return value after one step of nextInt with intial seed value 0x1');
 
-equal(new LongBitString(0x0,0x3d93cb7a).isEqual(t.nextInt()),true,'testing return value after one step of nextInt with intial seed value 0x0');
+strictEqual(0x3d93cb7a, t.nextInt(), 'testing return value after one step of nextInt with intial seed value 0x0');
 
-equal(new LongBitString(0x0,0x3242017).isEqual(u.nextInt()),true,'testing return value after one step of nextInt with intial seed value 0xFFFFFFFFFFFFFFFF');
+strictEqual(0x3242017, u.nextInt(), 'testing return value after one step of nextInt with intial seed value 0xFFFFFFFFFFFFFFFF');
 
 
 
 //second call
-equal(new LongBitString(0x0,0xa9973ade).isEqual(r.nextInt()),true,'testing return value after two steps of nextInt with intial seed value 0x123456789ABC');
+strictEqual(0xa9973ade, r.nextInt(), 'testing return value after two steps of nextInt with intial seed value 0x123456789ABC');
 
-equal(new LongBitString(0x0,0x684df992).isEqual(s.nextInt()),true,'testing return value after two steps of nextInt with intial seed value 0x1');
+strictEqual(0x684df992, s.nextInt(), 'testing return value after two steps of nextInt with intial seed value 0x1');
 
-equal(new LongBitString(0x0,0x9b3970be).isEqual(t.nextInt()),true,'testing return value after two steps of nextInt with intial seed value 0x0');
+strictEqual(0x9b3970be, t.nextInt(), 'testing return value after two steps of nextInt with intial seed value 0x0');
 
-equal(new LongBitString(0x0,0x8c4bff9e).isEqual(u.nextInt()),true,'testing return value after two steps of nextInt with intial seed value 0xFFFFFFFFFFFFFFFF');
+strictEqual(0x8c4bff9e, u.nextInt(), 'testing return value after two steps of nextInt with intial seed value 0xFFFFFFFFFFFFFFFF');
 
 });
