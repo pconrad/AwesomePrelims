@@ -1,8 +1,8 @@
-function generateSetOperationsQuestions(count, numChoices) {
+function generateSetOperationsQuestions(count, numChoices)
+{
     // TODO: Make sure numChoices is at least 2.
     // TODO: Right now there are only 30 possible questions! (although a lot more possible answers)
     // This could be fixed by regenerating two random subsets from the universe for each problem, rather than for the whole set of problems
-
 
     // generate five random subsets of a through h.
 
@@ -23,7 +23,8 @@ function generateSetOperationsQuestions(count, numChoices) {
 
     var names=["V","W","X","Y","Z"];
 
-    for (var i=0; i<sets.length; i++) {
+    for (var i=0; i<sets.length; i++)
+    {
         sets[i].sort();
         sets[i].name = names[i];
     }
@@ -60,8 +61,10 @@ function generateSetOperationsQuestions(count, numChoices) {
     var arr = [];
     var existing = [];
 
-    var problemExists = function(op, set1, set){
-        for ( var i = 0; i < existing.length; i++){
+    var problemExists = function(op, set1, set)
+    {
+        for ( var i = 0; i < existing.length; i++)
+        {
             if( existing[i][0] == op &&
                 existing[i][1] == set1 &&
                 existing[i][2] == set2){
@@ -69,26 +72,33 @@ function generateSetOperationsQuestions(count, numChoices) {
             }
         }
         existing.push([op,set1,set2]);
+
         return false;
     }
     var numOps = 3;
 
     // TODO: This is dirty! Let's change how the problems are generated so an individual problem set cannot be limited!
     count = Math.min(sets.length * (sets.length-1)*numOps,count);
-    while(arr.length < count) {
+
+    while(arr.length < count) 
+    {
         var twoSets = randFromArray(sets,2);
         var set1 = twoSets[0];
         var set2 = twoSets[1];
         var op = _.random(0,2);
-        if(problemExists(op,set1,set2)){
+
+        if(problemExists(op,set1,set2))
+        {
             continue;
         }
+
         var result = null;
         var wrongAnswers = [];
 
         var questionText = "Let " + set1.name + " be " + set1 + ". Let " + set2.name + " be " + set2 + ". What is the result of the operation " + set1.name +" ";
 
-        switch(op){
+        switch(op)
+        {
             case 0:
                 result = set1.union(set2);
                 questionText=questionText + "&cup;"; // TODO Make LaTeX robust
@@ -102,16 +112,21 @@ function generateSetOperationsQuestions(count, numChoices) {
                 questionText=questionText + "-";
                 break;
         }
+
         questionText = questionText + " " + set2.name + ".";
         result.sort();
 
         var wrongAnswers = [];
         var diffFromUniverse = universe.relativeComplement(result);
-        if ( result.cardinality() > 0 && diffFromUniverse.cardinality() > 0 ){
+
+        if ( result.cardinality() > 0 && diffFromUniverse.cardinality() > 0 )
+        {
             var tempSet = result.clone();
             tempSet.removeElementAtIndex(_.random(tempSet.cardinality()-1));
             tempSet.addElement(diffFromUniverse.elementAt(_.random(diffFromUniverse.cardinality()-1)));
-            if(!tempSet.isSameSetAs(result)){
+
+            if(!tempSet.isSameSetAs(result))
+            {
                 wrongAnswers.push(tempSet);
             }
         }
@@ -121,16 +136,22 @@ function generateSetOperationsQuestions(count, numChoices) {
          */
         var tempDistractors = [set1.union(set2),set1.intersect(set2),set1.relativeComplement(set2),set2.relativeComplement(set1),set1.symmetricDifference(set2)];
         tempDistractors.sort(function () { return 0.5 - Math.random();});
-        for ( var i = 0; i < tempDistractors.length && wrongAnswers.length < numChoices - 2 ; i++){
+
+        for ( var i = 0; i < tempDistractors.length && wrongAnswers.length < numChoices - 2 ; i++)
+        {
             var found = false;
             var tempSet = universe.getRandomSubset();
-            for ( var i = 0; i < wrongAnswers.length; i++){
-                if ( wrongAnswers[i].isSameSetAs(tempSet) ){
+
+            for ( var i = 0; i < wrongAnswers.length; i++)
+            {
+                if ( wrongAnswers[i].isSameSetAs(tempSet))
+                {
                     found = true;
                     break;
                 }
             }
-            if (!found && !result.isSameSetAs(tempSet)){
+            if (!found && !result.isSameSetAs(tempSet))
+            {
                 wrongAnswers.push(tempSet);
             }
         }
@@ -138,25 +159,32 @@ function generateSetOperationsQuestions(count, numChoices) {
         /*
          *  Fill in the rest of the wrongAnswers with random sets.
          */
-        while ( wrongAnswers.length < numChoices - 1 ){
+        while (wrongAnswers.length < numChoices - 1 )
+        {
             var found = false;
             var tempSet = universe.getRandomSubset();
-            for ( var i = 0; i < wrongAnswers.length; i++){
-                if ( wrongAnswers[i].isSameSetAs(tempSet) ){
+
+            for ( var i = 0; i < wrongAnswers.length; i++)
+            {
+                if ( wrongAnswers[i].isSameSetAs(tempSet))
+                {
                     found = true;
                     break;
                 }
             }
-            if (!found && !result.isSameSetAs(tempSet)){
+            if (!found && !result.isSameSetAs(tempSet))
+            {
                 wrongAnswers.push(tempSet);
             }
         }
+
         arr.push(new MultipleChoiceQuestion
             (questionText,
             result.toString(),
             _.map(wrongAnswers,function(set){ set.sort(); return set.toString() ;})));
 
     }
+    
     return arr;
 }
 
