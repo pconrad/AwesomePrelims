@@ -14,7 +14,7 @@ function MultipleChoiceQuestion(questionText,correctAnswer,incorrectAnswers){
     /** An array of text corresponding to incorrect answers
      */
     this.incorrectAnswers = incorrectAnswers;
-    /** Method used to selectn answers from the list of incorrect answers, returned in a random order.
+    /** Method used to select answers from the list of incorrect answers, returned in a random order.
      *  If no number is specified, all incorrect answers are returned.
      *  @param {int} [numOfAnswers] The number of incorrect answers that should be returned.
      *  @returns {array[string]} An array of incorrect answers
