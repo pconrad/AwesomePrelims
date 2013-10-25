@@ -1,7 +1,8 @@
 // rst02.js   
 
-function generateQuizzes(howMany, numQuestions, numChoices)
-{
+
+
+function generateQuizzes(howMany, numQuestions, numChoices) {
     for (var i=1; i<=howMany; i++) {
 	generateQuiz(i, numQuestions, numChoices);
     }

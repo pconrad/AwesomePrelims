@@ -17,7 +17,7 @@ function generateFunctionOnetoOneOntoQuestions(count, setName1, setName2, floatS
     var masksWeWant = [8,49,21,35,7];
     var randomMask, domainLabel, codomainLabel;
     while(arr.length < count){
-        randomMask = randFromArray(masksWeWant);
+        randomMask = randFromArray(masksWeWant); 
         switch(randomMask){
         case 8:  // (not a function)
             var oneThirdProb = _.random(2);
