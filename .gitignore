@@ -1,5 +1,12 @@
 java/MoodleXMLRhino/build
 
+# ignore LaTeX intermediate files
+
+*.aux
+*.pdf
+*.dvi
+*.log
+
 # ignore emacs backup files
 *~
 
