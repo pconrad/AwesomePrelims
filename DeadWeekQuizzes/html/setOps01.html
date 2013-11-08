@@ -11,10 +11,21 @@
     <script src="../js/setOps01.js"></script>
     <script>
 
+//  window.open($(location).attr("href"), 
+
+function showLaTeX() {
+     window.open( "setOps1.example.tex",
+                    "popupWindow", 
+                    "width=600,height=600,scrollbars=yes");
+}
+
+
 $( document ).ready(function() {
     dispOptions();
 
     $("#showHTML").click( function()  { window.alert($("body").html()); } );
+
+    $("#showLaTeX").click( function()  { showLaTeX(); } );
 
 });
 
@@ -24,6 +35,7 @@ $( document ).ready(function() {
   <body>
     <div id="controls">
    <button id="showHTML" type="button">Show HTML</button>
+   <button id="showLaTeX" type="button">Show LaTeX</button>
 </div>
     <h1>CS40 Set Operations Quiz</h1>
     Select the number of questions per quiz: <p id="numQuestionsDropDown">
