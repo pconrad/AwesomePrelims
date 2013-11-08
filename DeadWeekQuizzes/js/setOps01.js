@@ -17,7 +17,7 @@
 
 function dispOptions(){
 
-generateQuiz(1, 3, 5)
+generateQuiz(1, 3, 5);
 
 numQuestionsDropDownBox="<select id=&quot;numQuestionsDropDownBox&quot onChange=\"generateQuizzes(1, this.value, 5)\";>" +
   "<option value=\"3\">3</option>" +

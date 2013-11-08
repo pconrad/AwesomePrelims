@@ -21,6 +21,7 @@ function showLaTeX() {
 
 
 $( document ).ready(function() {
+
     dispOptions();
 
     $("#showHTML").click( function()  { window.alert($("body").html()); } );
@@ -33,12 +34,12 @@ $( document ).ready(function() {
     </script>
   </head>
   <body>
-    <div id="controls">
+<div id="controls">
    <button id="showHTML" type="button">Show HTML</button>
    <button id="showLaTeX" type="button">Show LaTeX</button>
 </div>
     <h1>CS40 Set Operations Quiz</h1>
-    Select the number of questions per quiz: <p id="numQuestionsDropDown">
+    Select the number of questions per quiz: <p id="numQuestionsDropDown"></p>
     <h2>Questions</h2>
     <p id="quizzes">
     <h2>Answer Key</h2>

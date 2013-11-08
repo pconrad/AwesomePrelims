@@ -2,15 +2,93 @@
 <html>
   <head>
     <title>CS40 Reflexive Symmetric Transitive Quiz</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="../../js/utils/multipleChoiceQuestion.js"></script> 
     <script src="../../js/resources/underscore-min.js"></script> 
     <script src="../../js/utils/set.js"></script>
     <script src="../../js/exercises/reflexiveSymmetricTransitive.js"></script>
     <script src="../js/dispOptions.js"></script> 
+
+    <script>
+
+//  window.open($(location).attr("href"), 
+
+function showLaTeX() {
+     window.open( "setOps1.example.tex",
+                    "popupWindow", 
+                    "width=600,height=600,scrollbars=yes");
+}
+
+
+$( document ).ready(function() {
+
+    dispOptions('false', generateReflexiveSymmetricTransitiveQuestions);
+
+    $("#showHTML").click( function()  {
+
+        var output = ($("body").html());
+        output = _.escape(output);
+
+       top.consoleRef=window.open('','myconsole',
+                     'width=auto,height=auto'
+                     +',menubar=1'
+                     +',toolbar=1'
+                     +',status=0'
+                     +',scrollbars=1'
+                     +',resizable=1');
+       top.consoleRef.document.writeln(
+             '<html><head><title>Console</title></head>'
+             +'<body bgcolor=white onLoad="self.focus()">'
+             + output
+             +'</body></html>');
+       top.consoleRef.document.close();
+});
+
+    $("#showPrettyHTML").click( function()  {
+
+        var output = ($("body").html());
+        output = _.escape(output);
+
+       top.consoleRef=window.open('','myconsole',
+                     'width=auto,height=auto'
+                     +',menubar=1'
+                     +',toolbar=1'
+                     +',status=0'
+                     +',scrollbars=1'
+                     +',resizable=1');
+       top.consoleRef.document.writeln(
+             '<html><head><title>Console</title>'
+             + '<scr' + 'ipt src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></sc'  + 'ript>'
+             + '</head>'
+             +'<body bgcolor=white onLoad="self.focus()">'
+             + '<pre class="prettyprint lang-html">' 
+	     + output
+             + '</pre>'
+             +'</body></html>');
+       top.consoleRef.document.close();
+});
+
+
+
+    $("#showLaTeX").click( function()  { showLaTeX(); } );
+
+});
+
+
+    </script>
+
+
   </head>
-  <body onload="dispOptions('false', generateReflexiveSymmetricTransitiveQuestions);">
+  <body>
+<div id="controls">
+   <button id="showHTML" type="button">Show HTML</button>
+   <button id="showPrettyHTML" type="button">Show Pretty HTML</button>
+   <button id="showLaTeX" type="button">Show LaTeX</button>
+</div>
+
+
     <h1>CS40 Reflexive Symmetric Transitive Quiz</h1>
-     Select the number of questions per quiz: <p id="numQuestionsDropDown">
+     Select the number of questions per quiz: <p id="numQuestionsDropDown"></p>
     <h2>Questions</h2>
     <p id="quizzes">
     <h2>Answer Key</h2>
