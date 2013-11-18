@@ -1,5 +1,16 @@
-function generateReflexiveSymmetricTransitiveQuestions(count, setName)
+function generateReflexiveSymmetricTransitiveQuestions(count, format, setName)
 {
+
+    // If format not supplied, default value is 'html'
+    format = (typeof format !== 'undefined') ? format : 'html';
+    
+    legalFormats = ["html","LaTeX"];
+   
+    if (legalFormats.indexOf(format)==-1) {
+	window.alert("Error: illegal format " + format);
+	return [];
+    }
+
     var arr = [];
     var setLabel = setName || "A";
     var sourceSet = new Set(["a","b","c"], false, setLabel);
