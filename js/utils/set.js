@@ -360,6 +360,31 @@ function Set(array, throwDupError, name) {
      */
     this.toString = this.format;
 
+    /** Generates a string representation of the set.
+     *  @returns {string} The string representation of the set
+     */
+    this.toLaTeX = function() {
+        var output = "$\{";
+        for(var i = 0; i < this.cardinality(); i++){
+            if(typeof(this.elements[i]) == "object"){
+                if(this.elements[i] instanceof Set || this.elements[i] instanceof Tuple) {
+                    output+=this.elements[i].toLaTeX();
+                }
+                else{
+                    //We don't support any other object types in our sets/tuples atm
+                    return " FORMAT ERROR in Set.toLaTeX ";
+                }
+            }else{
+                output+=this.elements[i];
+            }
+            if(i!=this.elements.length-1){
+                output+=",";
+            }
+        }
+        output += "\}$";
+        return output;
+    };
+
     /** Performs the cartesian product of this set with another set (e.g., A.cartesianProduct(B) = A x B).
      *  The return is a Set of {@linkcode Tuple} objects of cardinality this.cardinality() * otherset.cardinality().
      *  @param {Set} otherSet The second set to be used in the cartesian product
@@ -1009,6 +1034,18 @@ function BinaryRelation(baseSet, pairSet, secondSet){
             return this.baseSet.name + "x" + (this.secondSet ? this.secondSet.name : this.baseSet.name) + " - " + comp.toString();
         }
     };
+
+    this.toLaTeX = function (ignoreLabel) {
+        var comp = this.cartesianProduct.relativeComplement(this.pairSet);
+        if(ignoreLabel ||
+            this.pairSet.cardinality() <= comp.cardinality()){
+            return this.pairSet.toLaTeX();
+        } else{
+	    // SEE: http://www.proofwiki.org/wiki/Symbols:Set_Operations_and_Relations
+            return this.baseSet.name + " \\times " + (this.secondSet ? this.secondSet.name : this.baseSet.name) + " - " + comp.toLaTeX();
+        }
+
+    }
 
     this.addReflextiveClosure = function(){
         if(this.secondSet) {

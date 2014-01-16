@@ -11,10 +11,16 @@ function generateReflexiveSymmetricTransitiveQuestions(count, format, setName)
 	return [];
     }
 
-    var arr = [];
+    var arr = []; // array of relations, things returned from makeRandomRelation
     var setLabel = setName || "A";
     var sourceSet = new Set(["a","b","c"], false, setLabel);
     var temp = null;
+
+
+    // TODO: FIX ME!   THIS IS A TERRIBLE WAY TO DO THIS!!!!!
+    // INSTEAD, enumerate all the relations over set of 1, 2, 3, 4.
+    //  Encode their properties.   Then, use random indexes into that static table
+    //  to select the relations with properties desired.
 
     while(arr.length < count)
     {
@@ -40,10 +46,17 @@ function generateReflexiveSymmetricTransitiveQuestions(count, format, setName)
     for(var i = 0; i < arr.length; i++)
     {
         temp = arr[i];
+
+	if (format=="html") {
+	    formattedTemp = temp.toString();
+	} else if (format == "LaTeX") {
+	    formattedTemp = temp.toLaTeX();
+	}
+
         arr[i] =
         new MultipleChoiceQuestion( (questionBase
                      + "Let the relation R be "
-                     + temp.toString() + questionEnd),
+                     + formattedTemp + questionEnd),
                     getCorrectStatement(temp),
                     getIncorrectStatements(temp));
     }

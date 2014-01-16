@@ -1,21 +1,28 @@
 var theGenerateFunction = null; // embedded in the HTML
 
+function isLegalFormat(format, caller) {
+    // returns True if format is legal
+
+    legalFormats = ["html","LaTeX"];
+
+    if (legalFormats.indexOf(format)==-1) {
+	window.alert("Error: illegal format " + format + " passed to " + caller.toString());
+	return false;
+    }
+    return true;
+
+}
+
+
 function dispOptions(answerKey, generateFunction, format)
 {
 
     // If format not supplied, default value is 'html'
     format = (typeof format !== 'undefined') ? format : 'html';
+    if (!isLegalFormat(format,arguments.callee)) return;
     
-    legalFormats = ["html","LaTeX"];
-   
-    if (legalFormats.indexOf(format)==-1) {
-	window.alert("Error: illegal format " + format + " passed to dispOptions; " +
-		     " generateFunction= " + generateFunction);
-	return;
-    }
- 
+    theGenerateFunction = generateFunction; // save to global variable for event handler in HTML code to use
 
-    theGenerateFunction = generateFunction; 
     generateQuiz(1, 3, 5, answerKey, generateFunction, format)
 
     if (format=="html") {
@@ -38,22 +45,11 @@ function generateQuizzes(howMany, numQuestions, numChoices, answerKey, generateF
 
     // If format not supplied, default value is 'html'
     format = (typeof format !== 'undefined') ? format : 'html';
-    
-    legalFormats = ["html","LaTeX"];
-   
-    if (legalFormats.indexOf(format)==-1) {
-	window.alert("Error: illegal format " + format + " passed to dispOptions; " +
-		     " generateFunction= " + generateFunction);
-	return;
-    }
-
+    if (!isLegalFormat(format,arguments.callee)) return;
 
 
     window.document.getElementById("quizzes").innerHTML ="";
     window.document.getElementById("answers").innerHTML ="";
-
-
-
 
     for (var i=1; i<=howMany; i++) {
         generateQuiz(i, numQuestions, numChoices, answerKey, 
@@ -63,6 +59,7 @@ function generateQuizzes(howMany, numQuestions, numChoices, answerKey, generateF
 }
 
 function generateQuizHeader(format, num) {
+
     if (format=="html") {
 	return "<h2 style='page-break-before:always'>Quiz " + num + "</h2>\n";
     }
